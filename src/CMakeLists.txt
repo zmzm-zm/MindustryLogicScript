@@ -1,0 +1,12 @@
+add_subdirectory(core)
+add_executable(mls)
+target_sources(mls
+	PRIVATE
+		main.cpp
+		core/App.cpp)
+target_include_directories(mls
+	PRIVATE
+		${CMAKE_CURRENT_SOURCE_DIR}/core)
+target_link_libraries(mls
+	PTIVATE
+		Tokenizer)
