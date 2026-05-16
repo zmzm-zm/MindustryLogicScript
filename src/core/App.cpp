@@ -9,9 +9,10 @@ void App::run(int argc, char** argv) {
 	} catch (const std::exception& e) {
 		std::cerr << "Error: " << e.what() << std::endl;
 	}
+
 }
 void App::set_source_files(int argc, char** argv) {
-	for(int i = i; i < argc; ++i) {
+	for(int i = 1; i < argc; ++i) {
 		if (!fs::is_regular_file(argv[i])) {
 			throw std::runtime_error("Can not find file\"" + std::string(argv[i])) + "\"";
 		}
