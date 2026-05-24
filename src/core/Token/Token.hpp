@@ -8,7 +8,8 @@ enum class Token_type {
     NUMBER,
     STRING,
     OPERATOR,
-    END
+    END,
+    EOF_
 };
 struct Token {
     std::string value_ = "^v^";

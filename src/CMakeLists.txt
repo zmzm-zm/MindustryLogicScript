@@ -8,5 +8,9 @@ target_include_directories(mls
 	PRIVATE
 		${CMAKE_CURRENT_SOURCE_DIR}/core)
 target_link_libraries(mls
-	PTIVATE
-		Tokenizer)
+	PRIVATE
+		Tokenizer
+		Statement
+		Ast
+		Parser
+		Codegen)

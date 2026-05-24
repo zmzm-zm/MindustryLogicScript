@@ -1,0 +1,21 @@
+set a = 5 + 6;
+set b = 11 - 8;
+set c = 63 / 5;
+set d = 27 // 2;
+set e = 63 % 4;
+set f = 23 * 5;
+set g = 32 < 4;
+set h = 34 > 5;
+set i = 42 == 42;
+set j = 24 != 24;
+
+set a += 4;
+set b -= 45;
+set c /= 2;
+set d //= 3;
+set e %= 3;
+set f *= 3;
+set g != g;
+set h != h;
+set i != i;
+set j != j;

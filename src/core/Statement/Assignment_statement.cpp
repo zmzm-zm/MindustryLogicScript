@@ -3,3 +3,12 @@ Assignment_statement::Assignment_statement(const std::string& variable, const st
     variable_(variable), value_(value) {
     type_ = Statement_type::ASSIGNMENT;
 }
+std::string Assignment_statement::to_string() {
+	return "set " + variable_ + " " + value_ + "\n";
+}
+const std::string& Assignment_statement::get_variable() const {
+	return variable_;
+}
+const std::string& Assignment_statement::get_value() const {
+	return value_;
+}

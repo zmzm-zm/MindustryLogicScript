@@ -3,10 +3,10 @@
 #include "Statement.hpp"
 
 
-class Assignment_statement : public Statement {
+class If_statement : public Statement {
 public:
-    Assignment_statement(const std::string& variable, const std::string& value);
-    std::string to_string() override;
+    If_statement(const std::string& variable, const std::string& value);
+    std::string to_string() const override;
     const std::string& get_variable() const;
     const std::string& get_value() const;
 private:

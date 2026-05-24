@@ -1,10 +1,11 @@
 #pragma once
 #include <vector>
-#include "memory"
+#include <memory>
 #include "Statement/Statement.hpp"
 
 class AST_node {
-private:
-    std::pmr::vector<std::unique_ptr<AST_node>> children_;
+public:
+	AST_node(std::unique_ptr<Statement> statement);
+    std::vector<AST_node*> children_;
     std::unique_ptr<Statement> statement_;
 };

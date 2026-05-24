@@ -2,7 +2,5 @@
 #include "Ast_node.hpp"
 class AST {
 public:
-
-private:
-    std::unique_ptr<AST_node> root_;
+    AST_node* root_ = nullptr;
 };

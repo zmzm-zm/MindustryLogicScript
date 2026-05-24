@@ -2,3 +2,4 @@ build/
 .git/
 bin/
 *.sh
+TODO.md
