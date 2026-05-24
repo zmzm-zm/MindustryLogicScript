@@ -5,27 +5,6 @@ Operation_statement::Operation_statement(const std::string& left,
     left_(left), operator_(operator__), right_(std::move(right)), tmp_(left_) {
 	type_ = Statement_type::OPERATION;
 }
-/*
-set m 1
-set n 2
-set x 3
-set y t
-op add a 1 2
-op sub b 3 4
-op mul a 3 4
-op div b 3 4
-op add c_ x y
-op add c__ m n
-op add c c_ c__
-op add d m n
-op add d d x
-op add d d y
-
-a = 1 + 2 + 3 + 4;
-op add a 1 2
-op add a a 3
-op add a a 4
-*/ 
 std::string Operation_statement::to_string() {
 	if (right_ == nullptr) {
 			return "";

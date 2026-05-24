@@ -59,9 +59,6 @@ const Token Tokenizer::next_token() {
 	        value += contents_[pos_++];
 	    }
     } else value = c;
-    // 添加调试
-    std::cout << "next_token: read '" << value << "' at pos " << pos_ << std::endl;
-    
     auto type = get_type(value);
     return Token(value, type);
 }
@@ -94,10 +91,7 @@ const Token Tokenizer::peek(int offset) {
 	    	&& !is_operator(std::string(1, contents_[pos]))) {
 	        value += contents_[pos++];
 	    }
-    } else value = c;
-    // 添加调试
-    std::cout << "peek: read '" << value << "' at pos " << pos << std::endl;
-    
+    } else value = c;    
     auto type = get_type(value);
     return Token(value, type);
 }
