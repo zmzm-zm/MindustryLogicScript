@@ -1,16 +1,7 @@
-add_subdirectory(core)
-add_executable(mls)
-target_sources(mls
-	PRIVATE
-		main.cpp
-		core/App.cpp)
-target_include_directories(mls
-	PRIVATE
-		${CMAKE_CURRENT_SOURCE_DIR}/core)
-target_link_libraries(mls
-	PRIVATE
-		Tokenizer
-		Statement
-		Ast
-		Parser
-		Codegen)
+file(GLOB_RECURSE SOURCES
+    ${PROJECT_SOURCE_DIR}/src/*.cpp
+)
+add_executable(mls ${SOURCES})
+target_include_directories(mls PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+)
