@@ -1,0 +1,11 @@
+PROJECT_NAME           = "mls"
+PROJECT_VERSION        = 0.1.1
+OUTPUT_DIRECTORY       = ./doxygen_doc
+INPUT                  = ./include ./src
+RECURSIVE              = YES
+FILE_PATTERNS          = *.cpp *.hpp
+EXTRACT_ALL            = YES
+SOURCE_BROWSER         = YES
+HAVE_DOT               = FALSE
+CALL_GRAPH             = YES
+GENERATE_LATEX		   = NO

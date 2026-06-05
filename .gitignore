@@ -3,3 +3,5 @@ build/
 bin/
 *.sh
 TODO.md
+doxygen_doc/html/*
+!doxygen_doc/html/.gitkeep

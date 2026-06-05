@@ -20,5 +20,6 @@ std::unique_ptr<OperationNode> Parser::parseExpression() const {
 	std::string left = tokenizer_->nextToken().value_;
 	std::string operator__ = tokenizer_->nextToken().value_;
 	if (operator__ == ";") return std::make_unique<OperationNode>(left, operator__, nullptr);
+	// 右节点为下一个表达式
 	return std::make_unique<OperationNode>(left, operator__, parseExpression());
 }

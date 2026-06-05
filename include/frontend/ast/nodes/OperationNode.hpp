@@ -3,7 +3,10 @@
 #include <memory>
 #include <frontend/ast/nodes/StatementNode.hpp>
 
-
+/**
+ * @brief 表示多元运算的节点
+ * @details 整体数据结构是一个右斜树，但每个节点都有一个树叶节点
+ */
 class OperationNode : public StatementNode {
 public:
     OperationNode(const std::string& left,

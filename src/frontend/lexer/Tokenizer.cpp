@@ -49,10 +49,14 @@ const Token Tokenizer::nextToken() {
     	pos_++;
     }
     if (pos_ >= contents_.size()) return Token("EOF", TokenType::EOF_);
+    // 获取当前位置的字符并递增位置
     char c = contents_[pos_++];
     std::string value = "";
+    // 当前位置是运算符时直接返回单个字符
     if (!isOperator(std::string(1, c))) {
+    	//否则用这个字符初始化字符串
     	value += c;
+    	// 位置不超过文件大小 且 当前位置不是空格或字符 才继续读取
 	    while(pos_ < contents_.size()
 	    	&& !isspace(contents_[pos_])
 	    	&& !isOperator(std::string(1, contents_[pos_]))) {
@@ -63,6 +67,7 @@ const Token Tokenizer::nextToken() {
     return Token(value, type);
 }
 void Tokenizer::pass() {
+	// 先到达下一个Token的位置
 	while (pos_ < contents_.size() && isspace(contents_[pos_])) {
     	pos_++;
     }
@@ -72,11 +77,13 @@ void Tokenizer::pass() {
 	    while(pos_ < contents_.size()
 	    	&& !isspace(contents_[pos_])
 	    	&& !isOperator(std::string(1, contents_[pos_]))) {
-	        contents_[pos_++];
+	    	// 不记录字符，直接递增
+	        pos_++;
 	    }
     }
 }
 const Token Tokenizer::peek(int offset) {
+	// 用局部位置变量代替真实位置
 	std::size_t pos = pos_;
 	while (pos < contents_.size() && isspace(contents_[pos])) {
     	pos++;
