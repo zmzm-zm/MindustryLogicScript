@@ -8,10 +8,10 @@ enum class StatementType {
     UNDEFINED,
 };
 enum class OperatorType {
-    Addition,
-    Subtraction,
     Multiplication,
     Division,
+    Addition,
+    Subtraction,
     Undefined,
 };
 class StatementNode {

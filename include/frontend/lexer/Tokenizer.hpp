@@ -9,7 +9,7 @@ public:
 	void setCurrentFile(const std::string& file) noexcept;
 	void initializeFile();
 	bool isOperator(const std::string& c) noexcept;
-	const TokenType getType(std::string value);
+	const Token::Type getToken(std::string value);
 	/**
 	 * @defgroup TokenGetter Token获取器
 	 * @brief 获取Token的函数，有多种不同的模式

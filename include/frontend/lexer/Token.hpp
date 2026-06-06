@@ -1,18 +1,18 @@
 #pragma once
 #include <string>
 
-enum class TokenType {
-    UNDEFINED,
-    KEYWORD,
-    IDENT,
-    NUMBER,
-    STRING,
-    OPERATOR,
-    END,
-    EOF_
-};
 struct Token {
+    enum class Type {
+        UNDEFINED,
+        KEYWORD,
+        IDENT,
+        NUMBER,
+        STRING,
+        OPERATOR,
+        END,
+        EOF_
+    };
     std::string value_ = "^v^";
-    TokenType type_ = TokenType::UNDEFINED;
-    Token(std::string value, TokenType type);
+    Type type_ = Type::UNDEFINED;
+    Token(std::string value, Type type);
 };

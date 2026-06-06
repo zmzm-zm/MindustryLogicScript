@@ -4,10 +4,11 @@
 #include <cctype>
 #include <frontend/lexer/Token.hpp>
 #include <frontend/lexer/Tokenizer.hpp>
-
 #include <frontend/parser/Parser.hpp>
+#include <backend/logger/Logger.hpp>
 
-Token::Token(std::string value, TokenType type): value_(value), type_(type) {}
+
+Token::Token(std::string value, Token::Type type): value_(value), type_(type) {}
 
 
 void Tokenizer::setCurrentFile(const std::string& file) noexcept {
@@ -25,30 +26,30 @@ bool Tokenizer::isOperator(const std::string& c) noexcept {
 	return c == "+" || c == "-" || c == "*" || c == "/" || c == "//" || c == "="
 		|| c == "%" || c == "<" || c == ">" || c == "==" || c == "!=" || c == ";";
 }
-const TokenType Tokenizer::getType(std::string value) {
+const Token::Type Tokenizer::getToken(std::string value) {
 	if (value == "set" ||
 		value == "fc" ||
 		value == "if" ||
 		value == "else" ||
 		value == "for") {
-		return TokenType::KEYWORD;
+		return Token::Type::KEYWORD;
 	} else if (isdigit(value[0])) {
-		return TokenType::NUMBER;
+		return Token::Type::NUMBER;
 	} else if (value[0] == '"') {
-		return TokenType::STRING;
+		return Token::Type::STRING;
 	} else if (isOperator(value)) {
-		return TokenType::OPERATOR;
+		return Token::Type::OPERATOR;
 	} else if (value == ";") {
-		return TokenType::END;
+		return Token::Type::END;
 	} else {
-		return TokenType::IDENT;
+		return Token::Type::IDENT;
 	}
 }
 const Token Tokenizer::nextToken() {
     while (pos_ < contents_.size() && isspace(contents_[pos_])) {
     	pos_++;
     }
-    if (pos_ >= contents_.size()) return Token("EOF", TokenType::EOF_);
+    if (pos_ >= contents_.size()) return Token("EOF", Token::Type::EOF_);
     // 获取当前位置的字符并递增位置
     char c = contents_[pos_++];
     std::string value = "";
@@ -63,7 +64,8 @@ const Token Tokenizer::nextToken() {
 	        value += contents_[pos_++];
 	    }
     } else value = c;
-    auto type = getType(value);
+    auto type = getToken(value);
+	Logger::instance()->debug("Tokenizer::nextToken(): " + value);
     return Token(value, type);
 }
 void Tokenizer::pass() {
@@ -81,6 +83,7 @@ void Tokenizer::pass() {
 	        pos_++;
 	    }
     }
+	Logger::instance()->debug("Tokenizer::pass()");
 }
 const Token Tokenizer::peek(int offset) {
 	// 用局部位置变量代替真实位置
@@ -88,7 +91,7 @@ const Token Tokenizer::peek(int offset) {
 	while (pos < contents_.size() && isspace(contents_[pos])) {
     	pos++;
     }
-    if (pos >= contents_.size()) return Token("EOF", TokenType::EOF_);
+    if (pos >= contents_.size()) return Token("EOF", Token::Type::EOF_);
     char c = contents_[pos++];
     std::string value = "";
     if (!isOperator(std::string(1, c))) {
@@ -99,6 +102,7 @@ const Token Tokenizer::peek(int offset) {
 	        value += contents_[pos++];
 	    }
     } else value = c;    
-    auto type = getType(value);
+    auto type = getToken(value);
+	Logger::instance()->debug("Tokenizer::peek(): " + value);
     return Token(value, type);
 }

@@ -4,6 +4,7 @@
 #include "App.hpp"
 #include <frontend/ast/nodes/StatementNode.hpp>
 #include <frontend/ast/nodes/AssignmentNode.hpp>
+#include <backend/logger/Logger.hpp>
 namespace fs = std::filesystem;
 App::App(int argc, char** argv):
 	writer_("output.ml") {
@@ -19,9 +20,9 @@ App::App(int argc, char** argv):
 }
 void App::run() {
 	auto currentToken = tokenizer_.peek();
-	while(currentToken.type_ != TokenType::EOF_) {
+	while(currentToken.type_ != Token::Type::EOF_) {
 		switch (currentToken.type_) {
-			case TokenType::KEYWORD:
+			case Token::Type::KEYWORD:
 				if (currentToken.value_ == "set") {
 					auto statement = parser_.parseAssignment();
 					ast_.root_->children_.emplace_back(
@@ -29,8 +30,10 @@ void App::run() {
 					);
 				}
 				break;
-			case TokenType::IDENT:
-				if (currentToken.value_.find('.') == std::string::npos) {
+			case Token::Type::IDENT:
+				if (currentToken.value_.find('(') != std::string::npos) {
+					// auto func = parser_.
+				} else {
 					auto statement = parser_.parseExpression();
 					ast_.root_->children_.emplace_back(
 						new AstNode(std::move(statement))

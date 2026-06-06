@@ -5,3 +5,4 @@ bin/
 TODO.md
 doxygen_doc/html/*
 !doxygen_doc/html/.gitkeep
+/cmake-build-debug/

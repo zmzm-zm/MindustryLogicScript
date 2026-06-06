@@ -7,6 +7,7 @@
 #include <frontend/ast/nodes/AstNode.hpp>
 #include <backend/codegen/CodeGenerator.hpp>
 #include <backend/writer/Writer.hpp>
+#include <backend/logger/Logger.hpp>
 class App {
 public:
 	App(int argc, char** argv);

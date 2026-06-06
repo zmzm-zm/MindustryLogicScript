@@ -16,9 +16,13 @@ public:
     const std::string& getLeft() const;
     const std::unique_ptr<OperationNode>& getRight() const;
     const std::string& getOperator() const;
+    void analyzeOperator();
+    void sort();
 private:
+    static size_t size_;
     std::string left_ = "^v^";
     std::string operator_ = "^v^";
+    OperatorType operatorType_ = OperatorType::Undefined;
     std::string tmp_ = "";
     std::unique_ptr<OperationNode> right_ = nullptr;
 };
