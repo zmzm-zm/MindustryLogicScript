@@ -1,0 +1,40 @@
+{
+  "site": {
+    "title": "我的知识库",
+    "logoText": "Wiki"
+  },
+  "nav": [
+    {
+      "id": "welcome",
+      "title": "首页",
+      "file": "docs/welcome.md",
+      "isTop": true
+    },
+    {
+      "id": "getting-started",
+      "title": "快速开始",
+      "children": [
+        { "id": "getting-started/intro",   "title": "简介",       "file": "docs/getting-started/intro.md" },
+        { "id": "getting-started/install", "title": "安装与配置", "file": "docs/getting-started/install.md" },
+        { "id": "getting-started/usage",   "title": "基本用法",   "file": "docs/getting-started/usage.md" }
+      ]
+    },
+    {
+      "id": "guide",
+      "title": "使用指南",
+      "children": [
+        { "id": "guide/markdown",  "title": "Markdown 语法", "file": "docs/guide/markdown.md" },
+        { "id": "guide/structure", "title": "目录结构",       "file": "docs/guide/structure.md" },
+        { "id": "guide/theme",     "title": "主题定制",       "file": "docs/guide/theme.md" }
+      ]
+    },
+    {
+      "id": "reference",
+      "title": "参考文档",
+      "children": [
+        { "id": "reference/api",    "title": "API 说明",   "file": "docs/reference/api.md" },
+        { "id": "reference/config", "title": "配置项说明", "file": "docs/reference/config.md" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,477 @@
+/* ============================================================
+   layout.css  —  整体布局：顶栏、侧边栏、内容区、TOC 栏
+   ============================================================ */
+
+/* ---------- 顶栏 ---------- */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  z-index: 100;
+}
+
+.topbar__logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+  min-width: 200px;
+  text-decoration: none;
+}
+.topbar__logo:hover { text-decoration: none; color: var(--color-text); }
+
+.topbar__logo-icon {
+  width: 28px; height: 28px;
+  background: var(--color-text);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.topbar__logo-icon svg { width: 16px; height: 16px; }
+[data-theme="dark"] .topbar__logo-icon svg { stroke: #111; }
+
+/* ---------- 搜索框 ---------- */
+.topbar__search {
+  flex: 1;
+  max-width: 360px;
+  position: relative;
+}
+.topbar__search-input {
+  width: 100%;
+  height: 34px;
+  padding: 0 12px 0 36px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-search);
+  color: var(--color-text);
+  font-size: 0.875rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+}
+.topbar__search-input::placeholder { color: var(--color-text-faint); }
+.topbar__search-input:focus {
+  border-color: var(--color-border-mid);
+  box-shadow: 0 0 0 2px var(--color-accent-soft);
+}
+.topbar__search-icon {
+  position: absolute;
+  left: 10px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-faint);
+  pointer-events: none;
+}
+
+/* ---------- 搜索结果弹层 ---------- */
+.search-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0; right: 0;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-md);
+  max-height: 380px;
+  overflow-y: auto;
+  z-index: 200;
+  display: none;
+}
+.search-dropdown.is-open { display: block; }
+
+.search-result-item {
+  display: block;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover,
+.search-result-item.is-focused { background: var(--color-bg-hover); }
+
+.search-result-item__title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: 2px;
+}
+.search-result-item__excerpt {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.search-result-item__excerpt mark {
+  background: var(--color-accent-soft);
+  color: var(--color-text);
+  border-radius: 2px;
+  padding: 0 2px;
+  font-style: normal;
+}
+.search-empty {
+  padding: 20px 14px;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* ---------- 右侧操作区 ---------- */
+.topbar__actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-icon {
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  transition: background 0.15s, color 0.15s;
+}
+.btn-icon:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text);
+}
+.btn-icon svg { width: 18px; height: 18px; }
+
+/* ---------- 主체容器 ---------- */
+.app {
+  display: flex;
+  padding-top: 56px;
+  min-height: 100vh;
+}
+
+/* ---------- 侧边栏 ---------- */
+.sidebar {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  bottom: 0;
+  width: 260px;
+  background: var(--color-bg-sidebar);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 0.22s ease, transform 0.22s ease;
+  z-index: 50;
+}
+.sidebar.is-collapsed { width: 0; }
+
+.sidebar__inner {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px 0 32px;
+}
+
+/* 侧边栏收起/展开按钮 */
+.sidebar-toggle {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 260px;
+  width: 20px;
+  height: 48px;
+  background: var(--color-bg-sidebar);
+  border: 1px solid var(--color-border);
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-faint);
+  transition: left 0.22s ease, background 0.15s, color 0.15s;
+  z-index: 51;
+}
+.sidebar-toggle:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text);
+}
+.sidebar-toggle svg { width: 12px; height: 12px; }
+.sidebar.is-collapsed ~ .sidebar-toggle {
+  left: 0;
+}
+
+/* ---------- 内容主区域 ---------- */
+.main {
+  margin-left: 260px;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  transition: margin-left 0.22s ease;
+}
+.main.sidebar-collapsed { margin-left: 0; }
+
+/* ---------- 文章区 ---------- */
+.content {
+  flex: 1;
+  min-width: 0;
+  max-width: 780px;
+  padding: 48px 56px 80px;
+}
+
+/* ---------- 右侧 TOC 面板（桌面端：内联；窄屏：浮动抽屉） ---------- */
+.toc-panel {
+  width: 220px;
+  flex-shrink: 0;
+  padding: 48px 0 48px 0;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  transition: width 0.22s ease;
+}
+
+/* 桌面端折叠态 */
+.toc-panel.is-collapsed {
+  width: 32px;
+  overflow: hidden;
+}
+.toc-panel.is-collapsed .toc-body {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.toc-sticky {
+  position: sticky;
+  top: 80px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  padding-right: 16px;
+}
+.toc-panel.is-collapsed .toc-sticky {
+  overflow: hidden;
+  padding: 0;
+}
+
+/* TOC 收起/展开触发按钮（桌面端：内联粘性；窄屏见下方覆写） */
+.toc-toggle {
+  position: sticky;
+  top: 80px;
+  width: 20px;
+  height: 48px;
+  background: var(--color-bg-sidebar);
+  border: 1px solid var(--color-border);
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-faint);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 48px;
+  z-index: 10;
+}
+.toc-toggle:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text);
+}
+.toc-toggle svg { width: 12px; height: 12px; }
+
+/* TOC 内容区 */
+.toc-body {
+  flex: 1;
+  min-width: 0;
+  transition: opacity 0.2s;
+}
+
+.toc-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin-bottom: 10px;
+}
+
+.toc-nav { list-style: none; }
+.toc-nav li { margin-bottom: 2px; }
+
+.toc-nav a {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  padding: 3px 8px 3px 10px;
+  border-radius: 4px;
+  line-height: 1.4;
+  transition: color 0.15s, background 0.15s;
+  text-decoration: none;
+}
+.toc-nav a:hover {
+  color: var(--color-text);
+  text-decoration: none;
+  background: var(--color-bg-hover);
+}
+.toc-nav a.is-active {
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-weight: 500;
+}
+.toc-nav .toc-h3 a { padding-left: 22px; font-size: 0.775rem; }
+.toc-nav .toc-h4 a { padding-left: 34px; font-size: 0.75rem; }
+
+/* 面包屑 */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-bottom: 12px;
+}
+.breadcrumb__sep { color: var(--color-text-faint); }
+
+/* ---------- 移动端侧边栏遮罩 ---------- */
+#sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 49;
+  background: rgba(0, 0, 0, .4);
+  backdrop-filter: blur(2px);
+}
+#sidebar-overlay.is-visible { display: block; }
+
+/* ---------- TOC 抽屉遮罩（窄屏用） ---------- */
+#toc-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 79;
+  background: rgba(0, 0, 0, .25);
+}
+#toc-overlay.is-visible { display: block; }
+
+/* =====================================================
+   响应式断点
+   ===================================================== */
+
+/* =====================================================
+   1100px 以下：TOC 固定在右侧顶部，入口始终可见
+   ===================================================== */
+@media (max-width: 1100px) {
+  .content { max-width: 100%; padding: 40px 40px 80px; }
+
+  /*
+   * toc-panel：脱离文档流，fixed 固定在右侧顶部（topbar 下方）。
+   * 不用 bottom 定位，避免位置随布局/滚动漂移。
+   * 始终贴右边缘；内容向左展开。
+   */
+  .toc-panel {
+    position: fixed;
+    top: 72px;       /* topbar(56px) + 16px 间距 */
+    right: 0;
+    bottom: auto;
+    width: auto;
+    padding: 0;
+    flex-direction: row;
+    align-items: flex-start;
+    z-index: 80;
+    overflow: visible;
+  }
+
+  /* 重置桌面端折叠态（窄屏只用 is-open） */
+  .toc-panel.is-collapsed {
+    width: auto;
+    overflow: visible;
+  }
+  .toc-panel.is-collapsed .toc-body {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* toc-toggle：贴右边缘的固定触发条，所有断点下始终可见 */
+  .toc-toggle {
+    position: static;   /* 脱离 sticky，作为 flex 子项 */
+    flex-shrink: 0;
+    order: 1;           /* 按钮在左侧，内容向右侧（视觉）向左展开 */
+    width: 28px;
+    height: 44px;
+    margin-top: 0;
+    border: 1px solid var(--color-border);
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+    box-shadow: -2px 2px 8px rgba(0,0,0,0.10);
+    background: var(--color-bg-sidebar);
+  }
+
+  /* 抽屉内容区：默认宽度 0，展开时向左滑出 */
+  .toc-body {
+    order: 2;
+    width: 0;
+    max-height: calc(100vh - 100px);
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    background: var(--color-bg-sidebar);
+    border: 1px solid var(--color-border);
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+    transition: width 0.22s ease, opacity 0.18s ease;
+    box-shadow: -2px 2px 12px rgba(0,0,0,0.10);
+  }
+
+  /* 展开态：JS 给 .toc-panel 加 .is-open */
+  .toc-panel.is-open .toc-body {
+    width: 220px;
+    opacity: 1;
+    pointer-events: auto;
+    overflow-y: auto;
+    padding: 16px 12px 16px 16px;
+  }
+
+  /* toc-sticky 在抽屉里不需要 sticky，改为普通流 */
+  .toc-sticky {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+  }
+
+  /*
+   * 图标方向强制覆盖（CSS 优先级兜底）：
+   *   折叠时：icon-toc-open（箭头朝左，暗示可展开）
+   *   展开时：icon-toc-close（箭头朝右，暗示可关闭）
+   */
+  .toc-panel:not(.is-open) .icon-toc-close { display: none !important; }
+  .toc-panel:not(.is-open) .icon-toc-open  { display: flex !important; }
+  .toc-panel.is-open       .icon-toc-close { display: flex !important; }
+  .toc-panel.is-open       .icon-toc-open  { display: none !important; }
+}
+
+/* =====================================================
+   768px 以下：移动端
+   ===================================================== */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 260px;
+  }
+  .sidebar.is-mobile-open {
+    transform: translateX(0);
+  }
+  .main { margin-left: 0 !important; }
+  .sidebar-toggle { display: none; }
+  .content { padding: 24px 20px 60px; }
+  .topbar__logo { min-width: unset; }
+
+  /* 移动端 TOC 抽屉稍微窄一点 */
+  .toc-panel.is-open .toc-body { width: 200px; }
+}

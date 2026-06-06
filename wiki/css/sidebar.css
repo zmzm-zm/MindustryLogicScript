@@ -1,0 +1,113 @@
+/* ============================================================
+   sidebar.css  —  树状目录导航样式
+   ============================================================ */
+
+/* ---------- 分组标题 ---------- */
+.tree-group { margin-bottom: 4px; }
+
+.tree-group__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color 0.15s;
+  user-select: none;
+}
+.tree-group__header:hover { color: var(--color-text); }
+
+.tree-group__arrow {
+  margin-left: auto;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+  color: var(--color-text-faint);
+}
+.tree-group__arrow svg { width: 12px; height: 12px; }
+.tree-group.is-open .tree-group__arrow { transform: rotate(90deg); }
+
+/* ---------- 叶子节点（页面链接） ---------- */
+.tree-items {
+  list-style: none;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.25s ease;
+}
+.tree-group.is-open .tree-items { max-height: 2000px; }
+
+.tree-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 16px 5px 24px;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: 0;
+  transition: background 0.12s, color 0.12s;
+  position: relative;
+  line-height: 1.4;
+  border-left: 2px solid transparent;
+  margin-left: 0;
+}
+.tree-item:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text);
+}
+
+/* 活动项：小圆角反色 pill —— 用文字色做背景，背景色做文字 */
+.tree-item.is-active {
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-weight: 500;
+  border-radius: 5px;
+  border-left-color: transparent;
+  margin-left: 8px;
+  margin-right: 8px;
+  padding-left: 16px;
+}
+.tree-item.is-active .tree-item__icon {
+  color: var(--color-bg);
+}
+
+/* 子级缩进 */
+.tree-item--depth-2 { padding-left: 40px; }
+.tree-item--depth-3 { padding-left: 52px; }
+
+.tree-item__icon {
+  flex-shrink: 0;
+  color: var(--color-text-faint);
+}
+.tree-item__icon svg { width: 14px; height: 14px; }
+
+/* ---------- 欢迎首页链接（顶部独立条目） ---------- */
+.tree-top-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 16px;
+  border-left: 2px solid transparent;
+}
+.tree-top-item:hover { color: var(--color-text); }
+.tree-top-item.is-active {
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-weight: 500;
+  border-radius: 5px;
+  border-left-color: transparent;
+  margin-left: 8px;
+  margin-right: 8px;
+  padding-left: 8px;
+}

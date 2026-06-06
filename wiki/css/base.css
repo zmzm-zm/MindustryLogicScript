@@ -1,0 +1,99 @@
+/* ============================================================
+   base.css  —  CSS 变量、Reset、字体、全局基础样式
+   ============================================================ */
+
+/* ---------- 颜色变量（亮色） ---------- */
+:root {
+  --color-bg:          #ffffff;
+  --color-bg-sidebar:  #f7f7f7;
+  --color-bg-hover:    #efefef;
+  --color-bg-active:   #e8e8e8;
+  --color-bg-code:     #f0f0f0;
+  --color-bg-search:   #f0f0f0;
+
+  --color-border:      #e5e5e5;
+  --color-border-mid:  #d0d0d0;
+
+  --color-text:        #111111;
+  --color-text-muted:  #666666;
+  --color-text-faint:  #999999;
+
+  /* 单色 accent：亮色下用深色 */
+  --color-accent:      #111111;
+  --color-accent-hover:#333333;
+  --color-accent-soft: #f0f0f0;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.10);
+}
+
+/* ---------- 颜色变量（暗色） ---------- */
+[data-theme="dark"] {
+  --color-bg:          #111111;
+  --color-bg-sidebar:  #161616;
+  --color-bg-hover:    #1e1e1e;
+  --color-bg-active:   #252525;
+  --color-bg-code:     #1a1a1a;
+  --color-bg-search:   #1e1e1e;
+
+  --color-border:      #2a2a2a;
+  --color-border-mid:  #383838;
+
+  --color-text:        #ededed;
+  --color-text-muted:  #888888;
+  --color-text-faint:  #555555;
+
+  /* 单色 accent：暗色下用浅色 */
+  --color-accent:      #ededed;
+  --color-accent-hover:#ffffff;
+  --color-accent-soft: #222222;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.3);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.5);
+}
+
+/* ---------- Reset ---------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei",
+               sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--color-text);
+  background: var(--color-bg);
+  transition: background 0.2s, color 0.2s;
+  min-height: 100vh;
+}
+
+a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+a:hover { color: var(--color-accent-hover); text-decoration: underline; }
+
+img { max-width: 100%; display: block; }
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* ---------- 滚动条 ---------- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border-mid); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-faint); }
