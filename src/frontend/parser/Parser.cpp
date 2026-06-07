@@ -22,6 +22,6 @@ std::unique_ptr<OperationNode> Parser::parseExpression() const {
 	if (operator_ == ";") return std::make_unique<OperationNode>(left, operator_, nullptr);
 	// 右节点为下一个表达式
 	auto node = std::make_unique<OperationNode>(left, operator_, parseExpression());
-	// node->sort();
+	node->sort();
 	return node;
 }

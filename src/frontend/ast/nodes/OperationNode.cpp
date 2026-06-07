@@ -42,29 +42,24 @@ void OperationNode::analyzeOperator() {
 }
 
 void OperationNode::sort() {
-	auto next = right_.get();
-	for (int i = 0; i < size_; ++i) {
-		Logger::instance()->debug("OperationNode::sort()- i:" + i);
-		if (next != nullptr) {
-			Logger::instance()->debug("OperationNode::sort(): left: " + left_
-										+ "\nnext left: " + next->left_
-										+ "\noperator: " + operator_
-										+ "\nnext operator: " + next->operator_);
-		}
-		while (next != nullptr) {
-			if (operatorType_ < next->operatorType_) {
-				Logger::instance()->debug(operator_ + " < " + next->operator_);
-				auto tmpOperator = next->operator_;
-				operator_ = next->operator_;
-				next->operator_ = tmpOperator;
-				auto tmpType = next->operatorType_;
-				operatorType_ = next->operatorType_;
-				next->operatorType_ = tmpType;
-				auto tmpLeft = next->left_;
-				left_ = next->left_;
-				next->left_ = tmpLeft;
+	if (right_ == nullptr) return;
+	std::vector<OperationNode*> nodes;
+	OperationNode* current = this;
+	while (current != nullptr) {
+		nodes.push_back(current);
+		current = current->right_.get();
+	}
+	bool swapped = false;
+	for (size_t i = 0; i < nodes.size() - 1; ++i) {
+		swapped = false;
+		for (size_t j = 0; j < nodes.size() - i - 1; ++j) {
+			if (nodes[j]->operatorType_ > nodes[j+1]->operatorType_) {
+				std::swap(nodes[j]->left_, nodes[j+1]->left_);
+				std::swap(nodes[j]->operator_, nodes[j+1]->operator_);
+				std::swap(nodes[j]->operatorType_, nodes[j+1]->operatorType_);
+				swapped = true;
 			}
-			next = next->right_.get();
 		}
+		if (!swapped) break;
 	}
 }
