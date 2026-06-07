@@ -23,8 +23,8 @@ const path = require("path");
 /* ---- 可配置项 ---- */
 const DOCS_DIR   = path.join(__dirname, "docs");
 const OUTPUT     = path.join(__dirname, "manifest.json");
-const SITE_TITLE = "我的知识库";
-const LOGO_TEXT  = "Wiki";
+const SITE_TITLE = "Mindustry Logic Script Wiki";
+const LOGO_TEXT  = "MLS Wiki";
 
 /** 文件夹名 → 显示名（中文）映射，未配置的文件夹将自动首字母大写 */
 const FOLDER_NAMES = {

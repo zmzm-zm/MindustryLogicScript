@@ -9,7 +9,7 @@
 
 const Search = (() => {
 
-  /** @type {Array<{id, title, text, file}>} */
+  /** @type {Array<{id, title, text, rawMd, file}>} */
   let index = [];
   let ready = false;
 
@@ -33,12 +33,13 @@ const Search = (() => {
       docs.map(doc =>
         fetch(doc.file)
           .then(r => r.ok ? r.text() : "")
-          .then(text => ({
+          .then(rawMd => ({
             id:    doc.id,
             title: doc.title,
             file:  doc.file,
+            rawMd,
             // 去掉 Markdown 语法符号，只保留纯文本
-            text:  stripMarkdown(text),
+            text:  stripMarkdown(rawMd),
           }))
           .catch(() => null)
       )
@@ -64,9 +65,35 @@ const Search = (() => {
   }
 
   /**
+   * 从 rawMd 中找到关键词所在的最近标题 slug
+   */
+  function findNearestSlug(rawMd, kw) {
+    const lines  = rawMd.split("\n");
+    const lower  = kw.toLowerCase();
+    let lastHeadingSlug = null;
+
+    for (const line of lines) {
+      const hMatch = line.match(/^(#{1,6})\s+(.+)$/);
+      if (hMatch) {
+        const headingText = hMatch[2].trim();
+        lastHeadingSlug = headingText
+          .toLowerCase()
+          .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
+          .trim()
+          .replace(/[\s]+/g, "-");
+        continue;
+      }
+      if (line.toLowerCase().includes(lower) && lastHeadingSlug) {
+        return lastHeadingSlug;
+      }
+    }
+    return null;
+  }
+
+  /**
    * 查询
    * @param  {string} term
-   * @returns {Array<{id, title, excerpt, score}>}
+   * @returns {Array<{id, title, excerpt, score, slug}>}
    */
   function query(term) {
     if (!ready || !term.trim()) return [];
@@ -83,11 +110,14 @@ const Search = (() => {
       if (textLower.includes(kw))  score += 1;
       if (score === 0) continue;
 
+      const slug = findNearestSlug(doc.rawMd, kw);
+
       results.push({
         id:      doc.id,
         title:   doc.title,
         excerpt: buildExcerpt(doc.text, kw, 120),
         score,
+        slug,
       });
     }
 
