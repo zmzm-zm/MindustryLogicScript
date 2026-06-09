@@ -13,6 +13,8 @@ public:
 	App(int argc, char** argv);
 	using fileList = std::vector<std::string>;
 	void run();
+	
+	const std::string& variableDeclaration();
 private:
 	void setSourceFiles(int argc, char** argv);
 	fileList files_;
@@ -20,4 +22,5 @@ private:
 	Parser parser_;
 	Ast ast_;
 	Writer writer_;
+	std::vector<std::string> variables_;
 };

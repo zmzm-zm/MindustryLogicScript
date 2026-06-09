@@ -4,8 +4,17 @@
 #include <cstddef>
 #include <frontend/lexer/Token.hpp>
 
+enum class OperatorType {
+    Multiplication = 2,
+    Division = 2,
+    Addition = 1,
+    Subtraction = 1,
+    Undefined = 999999,
+};
+
 class Tokenizer {
 public:
+	static OperatorType analyzeOperator(const std::string& operator__);
 	void setCurrentFile(const std::string& file) noexcept;
 	void initializeFile();
 	bool isOperator(const std::string& c) noexcept;

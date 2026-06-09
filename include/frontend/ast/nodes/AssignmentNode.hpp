@@ -1,15 +1,15 @@
 #pragma once
 #include <string>
+#include <memory>
 #include <frontend/ast/nodes/StatementNode.hpp>
-
+class ExpressionNode;
 
 class AssignmentNode : public StatementNode {
 public:
-    AssignmentNode(const std::string& variable, const std::string& value);
+    AssignmentNode(const std::string& variable, std::unique_ptr<ExpressionNode> value);
     std::string toString() override;
-    const std::string& getVariable() const;
-    const std::string& getValue() const;
+    std::string getVar() const;
 private:
     std::string variable_ = "^v^";
-    std::string value_ = "^v^";
+    std::unique_ptr<ExpressionNode> value_;
 };

@@ -1,14 +1,22 @@
 #include <frontend/ast/nodes/AssignmentNode.hpp>
-AssignmentNode::AssignmentNode(const std::string& variable, const std::string& value):
-    variable_(variable), value_(value) {
+#include <frontend/ast/nodes/ExpressionNode.hpp>
+
+AssignmentNode::AssignmentNode(const std::string& variable, std::unique_ptr<ExpressionNode> value):
+    variable_(variable), value_(std::move(value)) {
     type_ = StatementType::ASSIGNMENT;
 }
+
 std::string AssignmentNode::toString() {
-	return "set " + variable_ + " " + value_ + "\n";
+    std::string exprCode = value_->toString();
+    
+    if (exprCode.empty()) {
+        // 单元表达式：直接set变量为值
+        return "set " + variable_ + " " + value_->getValue() + "\n";
+    }
+    
+    // 复合表达式：先set为0，再生成op指令，最后set结果
+    return "set " + variable_ + " 0\n" + exprCode + "set " + variable_ + " " + value_->getName() + "\n";
 }
-const std::string& AssignmentNode::getVariable() const {
+std::string AssignmentNode::getVar() const {
 	return variable_;
-}
-const std::string& AssignmentNode::getValue() const {
-	return value_;
 }

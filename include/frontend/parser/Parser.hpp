@@ -1,17 +1,19 @@
 #pragma once
 #include <memory>
-#include <frontend/ast/nodes/StatementNode.hpp>
-#include <frontend/ast/nodes/OperationNode.hpp>
-#include <frontend/ast/nodes/AssignmentNode.hpp>
-#include <frontend/lexer/Token.hpp>
-#include <frontend/lexer/Tokenizer.hpp>
-
+#include <string>
+class Tokenizer;
+class AssignmentNode;
+class ExpressionNode;
+enum class OperatorType;
 
 class Parser {
 public:
     void setTokenizer(Tokenizer& tokenizer);
     std::unique_ptr<AssignmentNode> parseAssignment() const;
-    std::unique_ptr<OperationNode> parseExpression() const;
+    std::unique_ptr<ExpressionNode> parseExpression(
+	    const std::string name = "^v^",
+	    std::size_t index = 0) const;
 private:
+	ExpressionNode parseEachExpression() const;
     Tokenizer* tokenizer_ = nullptr;
 };

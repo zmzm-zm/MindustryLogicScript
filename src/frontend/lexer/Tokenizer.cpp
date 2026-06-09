@@ -10,7 +10,13 @@
 
 Token::Token(std::string value, Token::Type type): value_(value), type_(type) {}
 
-
+OperatorType Tokenizer::analyzeOperator(const std::string& operator__) {
+	if (operator__ == "*") return OperatorType::Multiplication;
+	else if (operator__ == "/") return OperatorType::Division;
+	else if (operator__ == "+") return OperatorType::Addition;
+	else if (operator__ == "-") return OperatorType::Subtraction;
+	else return OperatorType::Undefined;
+}
 void Tokenizer::setCurrentFile(const std::string& file) noexcept {
 	currentFileName_ = file;
 }

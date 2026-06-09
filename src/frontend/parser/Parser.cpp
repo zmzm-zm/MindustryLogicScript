@@ -1,27 +1,115 @@
 #include <vector>
+#include <algorithm>
+#include <stdexcept>
+#include <iostream>
 #include <frontend/lexer/Token.hpp>
+#include <frontend/lexer/Tokenizer.hpp>
 #include <frontend/parser/Parser.hpp>
 #include <frontend/ast/nodes/StatementNode.hpp>
 #include <frontend/ast/nodes/AssignmentNode.hpp>
-#include <frontend/ast/nodes/OperationNode.hpp>
+#include <frontend/ast/nodes/ExpressionNode.hpp>
 
 void Parser::setTokenizer(Tokenizer& tokenizer) {
     tokenizer_ = &tokenizer;
 }
 std::unique_ptr<AssignmentNode> Parser::parseAssignment() const {
-	tokenizer_->pass();
+    tokenizer_->pass();  // 跳过 "set" 关键字
     auto variable = tokenizer_->nextToken();
-    tokenizer_->pass();
-    auto value = tokenizer_->nextToken();
-    tokenizer_->pass();
-    return std::make_unique<AssignmentNode>(variable.value_, value.value_);
+    tokenizer_->pass();  // 跳过 "="
+    auto exprNode = parseExpression(variable.value_, 0);  // 解析表达式
+    return std::make_unique<AssignmentNode>(variable.value_, std::move(exprNode));
 }
-std::unique_ptr<OperationNode> Parser::parseExpression() const {
-	std::string left = tokenizer_->nextToken().value_;
-	std::string operator_ = tokenizer_->nextToken().value_;
-	if (operator_ == ";") return std::make_unique<OperationNode>(left, operator_, nullptr);
-	// 右节点为下一个表达式
-	auto node = std::make_unique<OperationNode>(left, operator_, parseExpression());
-	node->sort();
-	return node;
+ExpressionNode Parser::parseEachExpression() const {
+    std::string left = tokenizer_->nextToken().value_;
+    std::string operator_ = tokenizer_->nextToken().value_;
+    return ExpressionNode("expr", nullptr, left + operator_, nullptr);
+}
+std::unique_ptr<ExpressionNode> Parser::parseExpression(
+    const std::string name,
+    std::size_t index) const {
+    
+    std::vector<std::unique_ptr<ExpressionNode>> output;
+    std::vector<Token> operators;
+    std::string currentName = name;
+    std::size_t currentIndex = index;
+    
+    auto makeNodeName = [&]() -> std::string {
+        return currentName + std::to_string(currentIndex++);
+    };
+    
+    while (true) {
+        Token tok = tokenizer_->peek();
+        // 在 while(true) 开头添加
+		std::cerr << "Processing token: " << tok.value_ << " type=" << (int)tok.type_ 
+		          << " output.size=" << output.size() 
+		          << " operators.size=" << operators.size() << std::endl;
+        if (tok.type_ == Token::Type::NUMBER || tok.type_ == Token::Type::IDENT) {
+            tokenizer_->pass();
+            output.push_back(std::make_unique<ExpressionNode>(
+                makeNodeName(), nullptr, tok.value_, nullptr
+            ));
+        }
+        else if (tok.type_ == Token::Type::OPERATOR) {
+		    // 分号作为语句分隔符，不应该在表达式中
+		    if (tok.value_ == ";") {
+		    	tokenizer_->pass();
+		        break;  // 结束表达式解析
+		    }
+		    
+		    tokenizer_->pass();
+		    OperatorType currOp = Tokenizer::analyzeOperator(tok.value_);
+		    
+		    while (!operators.empty()) {
+		        Token top = operators.back();
+		        if (top.type_ != Token::Type::OPERATOR) break;
+		        
+		        OperatorType topOp = Tokenizer::analyzeOperator(top.value_);
+		        if ((int)topOp >= (int)currOp) {
+		            if (output.size() < 2) {
+		                throw std::runtime_error("Invalid expression: not enough operands for operator " + top.value_);
+		            }
+		            operators.pop_back();
+		            auto right = std::move(output.back());
+		            output.pop_back();
+		            auto left = std::move(output.back());
+		            output.pop_back();
+		            output.push_back(std::make_unique<ExpressionNode>(
+		                makeNodeName(), left.release(), top.value_, right.release()
+		            ));
+		        } else {
+		            break;
+		        }
+		    }
+		    operators.push_back(tok);
+		}
+        else if (tok.type_ == Token::Type::END || tok.type_ == Token::Type::EOF_) {
+            break;
+        }
+        else {
+            tokenizer_->pass();
+        }
+    }
+    
+    // 处理剩余操作符
+    while (!operators.empty()) {
+        Token op = operators.back();
+        if (output.size() < 2) {
+            throw std::runtime_error("Invalid expression: not enough operands for operator " + op.value_);
+        }
+        operators.pop_back();
+        auto right = std::move(output.back());
+        output.pop_back();
+        auto left = std::move(output.back());
+        output.pop_back();
+        output.push_back(std::make_unique<ExpressionNode>(
+            makeNodeName(), left.release(), op.value_, right.release()
+        ));
+    }
+    
+    if (output.size() != 1) {
+        throw std::runtime_error("Invalid expression: final stack size is " + 
+                                  std::to_string(output.size()));
+    }
+    
+    return std::move(output[0]);
 }
