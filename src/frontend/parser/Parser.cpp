@@ -13,10 +13,10 @@ void Parser::setTokenizer(Tokenizer& tokenizer) {
     tokenizer_ = &tokenizer;
 }
 std::unique_ptr<AssignmentNode> Parser::parseAssignment() const {
-    tokenizer_->pass();  // 跳过 "set" 关键字
+    tokenizer_->pass();
     auto variable = tokenizer_->nextToken();
-    tokenizer_->pass();  // 跳过 "="
-    auto exprNode = parseExpression(variable.value_, 0);  // 解析表达式
+    tokenizer_->pass();
+    auto exprNode = parseExpression(variable.value_, 0);
     return std::make_unique<AssignmentNode>(variable.value_, std::move(exprNode));
 }
 ExpressionNode Parser::parseEachExpression() const {
@@ -39,7 +39,7 @@ std::unique_ptr<ExpressionNode> Parser::parseExpression(
     
     while (true) {
         Token tok = tokenizer_->peek();
-        // 在 while(true) 开头添加
+        
 		std::cerr << "Processing token: " << tok.value_ << " type=" << (int)tok.type_ 
 		          << " output.size=" << output.size() 
 		          << " operators.size=" << operators.size() << std::endl;
@@ -50,10 +50,10 @@ std::unique_ptr<ExpressionNode> Parser::parseExpression(
             ));
         }
         else if (tok.type_ == Token::Type::OPERATOR) {
-		    // 分号作为语句分隔符，不应该在表达式中
+		    
 		    if (tok.value_ == ";") {
 		    	tokenizer_->pass();
-		        break;  // 结束表达式解析
+		        break;  
 		    }
 		    
 		    tokenizer_->pass();
@@ -90,7 +90,7 @@ std::unique_ptr<ExpressionNode> Parser::parseExpression(
         }
     }
     
-    // 处理剩余操作符
+    
     while (!operators.empty()) {
         Token op = operators.back();
         if (output.size() < 2) {

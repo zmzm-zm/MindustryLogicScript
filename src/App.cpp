@@ -25,20 +25,6 @@ void App::run() {
 		switch (currentToken.type_) {
 			case Token::Type::KEYWORD:
 				if (currentToken.value_ == "set") {
-					/*
-				    std::string var; 
-				    try {
-				        var = variableDeclaration();
-				    } catch (const std::exception& e) {
-				        std::cerr << "Error: " << e.what() << std::endl;
-				        Logger::instance()->error(e.what());
-				    }
-				    // 1. parseExpression 不需要传 var，它返回的是表达式树
-				    auto node = parser_.parseExpression(var);
-				    
-				    // 2. AssignmentNode 需要 unique_ptr，所以用 std::move
-				    // 3. node.get() 改成 std::move(node)
-				    */
 				    auto node = parser_.parseAssignment();
 				    ast_.root_->children_.emplace_back(
 				        new AstNode(std::move(node))
@@ -46,15 +32,6 @@ void App::run() {
 				}
 				break;
 			case Token::Type::IDENT:
-			/*
-				if (currentToken.value_.find('(') != std::string::npos) {
-					
-				} else {
-					auto statement = parser_.parseExpression();
-					ast_.root_->children_.emplace_back(
-						new AstNode(std::move(statement))
-					);
-				}*/
 		}
 		currentToken = tokenizer_.peek();
 	}

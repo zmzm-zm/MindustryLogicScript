@@ -12,7 +12,7 @@ public:
         ExpressionNode* right = nullptr);
     
     ~ExpressionNode();
-    std::string toString() override;  //
+    std::string toString() override;
     ExpressionNode* getLeft() const;
     void setLeft(ExpressionNode* left);
     ExpressionNode* getRight() const;

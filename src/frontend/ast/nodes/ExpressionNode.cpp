@@ -23,7 +23,7 @@ std::string ExpressionNode::toString() {
         [&](const ExpressionNode* node) -> std::string {
             if (!node) return "";
             
-            // 叶子节点（数字或变量）
+            
             if (!node->left_ && !node->right_) {
                 return node->value_;
             }
@@ -46,9 +46,9 @@ std::string ExpressionNode::toString() {
     
     std::string resultVar = traverse(this);
     
-    // 如果是单元表达式（没有生成任何op指令），需要特殊处理
+    
     if (lines.empty()) {
-        // 直接返回叶子节点的值，不生成op指令
+        
         return "";
     }
     
