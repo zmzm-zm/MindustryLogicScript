@@ -33,7 +33,7 @@ bool Tokenizer::isOperator(const std::string& c) noexcept {
 		|| c == "%" || c == "<" || c == ">" || c == "==" || c == "!=" || c == ";";
 }
 const Token::Type Tokenizer::getToken(std::string value) {
-	if (value == "set" ||
+	if (value == "var" ||
 		value == "fc" ||
 		value == "if" ||
 		value == "else" ||

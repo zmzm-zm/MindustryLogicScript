@@ -24,7 +24,7 @@ void App::run() {
 	while(currentToken.type_ != Token::Type::EOF_) {
 		switch (currentToken.type_) {
 			case Token::Type::KEYWORD:
-				if (currentToken.value_ == "set") {
+				if (currentToken.value_ == "var") {
 				    auto node = parser_.parseAssignment();
 				    ast_.root_->children_.emplace_back(
 				        new AstNode(std::move(node))

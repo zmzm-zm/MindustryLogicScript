@@ -1,7 +1,7 @@
-set a= 10;
-set b =20;
-set c=30;
-set e = 1 +2 * 3+ 4;
-set f = a / b-30 * 40;
-set g =  a * b * c;
-set p = 1/2*3+4-5+6*7/8+9+10;
+var a= 10;
+var b =20;
+var c=30;
+var e = 1 +2 * 3+ 4;
+var f = a / b-30 * 40;
+var g =  a * b * c;
+var p = 1/2*3+4-5+6*7/8+9+10;
