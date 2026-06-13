@@ -1,6 +1,7 @@
 #include <filesystem>
 #include <stdexcept>
 #include <iostream>
+#include <algorithm>
 #include "App.hpp"
 #include <frontend/ast/nodes/StatementNode.hpp>
 #include <frontend/ast/nodes/AssignmentNode.hpp>
@@ -19,24 +20,50 @@ App::App(int argc, char** argv):
 	parser_.setTokenizer(tokenizer_);
 	ast_.root_ = new AstNode(nullptr);
 }
+
 void App::run() {
+	try {
+		processToken();
+	} catch (const std::exception& e) {
+		std::cerr << "Error: " << e.what() << std::endl;
+	}
+	writer_.write(CodeGenerator::generate(ast_.root_) + "stop\n");
+}
+
+void App::processToken() {
 	auto currentToken = tokenizer_.peek();
 	while(currentToken.type_ != Token::Type::EOF_) {
 		switch (currentToken.type_) {
 			case Token::Type::KEYWORD:
-				if (currentToken.value_ == "var") {
-				    auto node = parser_.parseAssignment();
-				    ast_.root_->children_.emplace_back(
-				        new AstNode(std::move(node))
-				    );
-				}
+				if (currentToken.value_ == "var") variableDeclaration();
 				break;
 			case Token::Type::IDENT:
 		}
 		currentToken = tokenizer_.peek();
 	}
-	writer_.write(CodeGenerator::generate(ast_.root_) + "stop\n");
 }
+
+void App::variableDeclaration() {
+	auto var = tokenizer_.peek(2).value_;
+	auto c = tokenizer_.peek(3).value_;
+	if (c != "=") error("expect \"=\"");
+	auto it = find(variables_.begin(), variables_.end(), var);
+	if (it != variables_.end()) {
+		error("\" " + var + "\" has been declared");
+	}
+	variables_.emplace_back(var);
+	
+	auto node = parser_.parseAssignment();
+    ast_.root_->children_.emplace_back(
+        new AstNode(std::move(node))
+    );
+}
+
+void App::error(std::string msg) {
+	Logger::instance()->error(msg);
+	throw std::runtime_error(msg);
+}
+
 void App::setSourceFiles(int argc, char** argv) {
 	for(int i = 1; i < argc; ++i) {
 		if (!fs::is_regular_file(argv[i])) {
@@ -44,13 +71,4 @@ void App::setSourceFiles(int argc, char** argv) {
 		}
 	}
 	files_.assign(argv + 1, argv + argc);
-}
-
-const std::string& App::variableDeclaration() {
-	tokenizer_.pass();
-	auto var = tokenizer_.nextToken().value_;
-	auto c = tokenizer_.nextToken().value_;
-	if (c != "=") throw std::runtime_error("expect \"=\"");
-	variables_.emplace_back(var);
-	return std::string(var);
 }

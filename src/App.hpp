@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <frontend/lexer/Token.hpp>
 #include <frontend/lexer/Tokenizer.hpp>
 #include <frontend/parser/Parser.hpp>
 #include <frontend/ast/Ast.hpp>
@@ -14,13 +15,15 @@ public:
 	using fileList = std::vector<std::string>;
 	void run();
 	
-	const std::string& variableDeclaration();
+	void variableDeclaration();
 private:
+	void processToken();
+	void error(std::string msg);
 	void setSourceFiles(int argc, char** argv);
 	fileList files_;
-	Tokenizer tokenizer_;
 	Parser parser_;
 	Ast ast_;
+	Tokenizer tokenizer_;
 	Writer writer_;
 	std::vector<std::string> variables_;
 };

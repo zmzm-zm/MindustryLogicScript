@@ -94,21 +94,25 @@ void Tokenizer::pass() {
 const Token Tokenizer::peek(int offset) {
 	
 	std::size_t pos = pos_;
-	while (pos < contents_.size() && isspace(contents_[pos])) {
-    	pos++;
-    }
-    if (pos >= contents_.size()) return Token("EOF", Token::Type::EOF_);
-    char c = contents_[pos++];
-    std::string value = "";
-    if (!isOperator(std::string(1, c))) {
-    	value += c;
-	    while(pos < contents_.size()
-	    	&& !isspace(contents_[pos])
-	    	&& !isOperator(std::string(1, contents_[pos]))) {
-	        value += contents_[pos++];
+	std::string value = "";
+	Token::Type type;
+	for (int i = 0; i < offset; ++i) {
+		while (pos < contents_.size() && isspace(contents_[pos])) {
+	    	pos++;
 	    }
-    } else value = c;    
-    auto type = getToken(value);
-	Logger::instance()->debug("Tokenizer::peek(): " + value);
+	    if (pos >= contents_.size()) return Token("EOF", Token::Type::EOF_);
+	    char c = contents_[pos++];
+	    value = "";
+	    if (!isOperator(std::string(1, c))) {
+	    	value += c;
+		    while(pos < contents_.size()
+		    	&& !isspace(contents_[pos])
+		    	&& !isOperator(std::string(1, contents_[pos]))) {
+		        value += contents_[pos++];
+		    }
+	    } else value = c;    
+	    type = getToken(value);
+		Logger::instance()->debug("Tokenizer::peek(): " + value);
+	}
     return Token(value, type);
 }
