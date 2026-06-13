@@ -5,87 +5,30 @@
   },
   "nav": [
     {
-      "id": "welcome",
-      "title": "欢迎使用知识库",
-      "file": "docs/welcome.md",
+      "id": "readme",
+      "title": "介绍",
+      "file": "docs/README.md",
       "isTop": true
     },
     {
-      "id": "getting-started",
-      "title": "快速开始",
+      "id": "compiler",
+      "title": "Compiler",
       "children": [
         {
-          "id": "getting-started/install",
-          "title": "安装与配置",
-          "file": "docs/getting-started/install.md"
-        },
-        {
-          "id": "getting-started/intro",
-          "title": "简介",
-          "file": "docs/getting-started/intro.md"
-        },
-        {
-          "id": "getting-started/usage",
-          "title": "基本用法",
-          "file": "docs/getting-started/usage.md"
+          "id": "compiler/introduction",
+          "title": "Introduction",
+          "file": "docs/compiler/introduction.md"
         }
       ]
     },
     {
-      "id": "grammer",
-      "title": "Grammer",
+      "id": "language",
+      "title": "Language",
       "children": [
         {
-          "id": "grammer/a",
-          "title": "This is a test file",
-          "file": "docs/grammer/a.md"
-        },
-        {
-          "id": "grammer/basic",
-          "title": "MLS语法",
-          "file": "docs/grammer/basic.md"
-        },
-        {
-          "id": "grammer/h",
-          "title": "H",
-          "file": "docs/grammer/h.md"
-        }
-      ]
-    },
-    {
-      "id": "guide",
-      "title": "使用指南",
-      "children": [
-        {
-          "id": "guide/markdown",
-          "title": "Markdown 语法",
-          "file": "docs/guide/markdown.md"
-        },
-        {
-          "id": "guide/structure",
-          "title": "目录结构",
-          "file": "docs/guide/structure.md"
-        },
-        {
-          "id": "guide/theme",
-          "title": "主题定制",
-          "file": "docs/guide/theme.md"
-        }
-      ]
-    },
-    {
-      "id": "reference",
-      "title": "参考文档",
-      "children": [
-        {
-          "id": "reference/api",
-          "title": "API 说明",
-          "file": "docs/reference/api.md"
-        },
-        {
-          "id": "reference/config",
-          "title": "配置项说明",
-          "file": "docs/reference/config.md"
+          "id": "language/introduction",
+          "title": "介绍",
+          "file": "docs/language/introduction.md"
         }
       ]
     }

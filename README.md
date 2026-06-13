@@ -1,13 +1,13 @@
 # Mindustry Logic Script  
-**See an English version at [`this`](./README_EN.md)** 
+**See an English version at [this](./README_EN.md)** 
 **README最后修改日期26.6.9** 
 本仓库提供了一个编译器  
 用于将mls脚本语言转化为Mindustry Logic，即像素工厂逻辑  
-具体信息见[`本仓库Wiki`](https://zmzm-zm.github.io/MindustryLogicScript)  
+具体信息见[本仓库Wiki](https://zmzm-zm.github.io/MindustryLogicScript)  
 ## 关于mls  
 - **mls不是市面上任何一种语言**  
 可能会有重名，雷同等，纯属意外  
-具体语法可以见[`本仓库Wiki`](https://zmzm-zm.github.io/MindustryLogicScript)  
+具体语法可以见[本仓库Wiki](https://zmzm-zm.github.io/MindustryLogicScript)  
 - **mls不是一门编程语言**  
 它是为了简化Mindustry Logic并提供更高级的特性  
 在被转化为Mindustry Logic后在游戏上运行  
