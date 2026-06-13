@@ -3,16 +3,7 @@ std::string CodeGenerator::generate(const AstNode* node) {
 	const auto& statement = node->statement_;
 	std::string selfCode = "";
 	std::string childrenCode = "";
-	if (!(node->statement_ == nullptr)) {
-		switch (statement->getType()) {
-			case StatementType::ASSIGNMENT:
-				selfCode = statement->toString();
-				break;
-			case StatementType::OPERATION:
-				selfCode = statement->toString();
-				break;
-		}
-	}
+	if (!(node->statement_ == nullptr))  selfCode = statement->toString();
 	for(auto* each: node->children_) {
 		childrenCode += generate(each);
 	}

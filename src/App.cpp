@@ -3,10 +3,12 @@
 #include <iostream>
 #include <algorithm>
 #include "App.hpp"
+#include "frontend/ast/nodes/AstNode.hpp"
 #include <frontend/ast/nodes/StatementNode.hpp>
-#include <frontend/ast/nodes/AssignmentNode.hpp>
+#include <frontend/ast/nodes/InitializationNode.hpp>
 #include <backend/logger/Logger.hpp>
 #include <frontend/ast/nodes/ExpressionNode.hpp>
+#include <frontend/ast/nodes/AssignmentNode.hpp>
 namespace fs = std::filesystem;
 App::App(int argc, char** argv):
 	writer_("output.ml") {
@@ -20,7 +22,6 @@ App::App(int argc, char** argv):
 	parser_.setTokenizer(tokenizer_);
 	ast_.root_ = new AstNode(nullptr);
 }
-
 void App::run() {
 	try {
 		processToken();
@@ -38,6 +39,8 @@ void App::processToken() {
 				if (currentToken.value_ == "var") variableDeclaration();
 				break;
 			case Token::Type::IDENT:
+				if (currentToken.value_.find(".") == std::string::npos) variableAssignment();
+				break;
 		}
 		currentToken = tokenizer_.peek();
 	}
@@ -53,8 +56,22 @@ void App::variableDeclaration() {
 	}
 	variables_.emplace_back(var);
 	
-	auto node = parser_.parseAssignment();
+	auto node = parser_.parseInitialization();
     ast_.root_->children_.emplace_back(
+        new AstNode(std::move(node))
+    );
+}
+
+void App::variableAssignment() {
+	auto var = tokenizer_.peek().value_;
+	auto c = tokenizer_.peek(2).value_;
+	if (c != "=") error("expect \"=\"");
+	auto it = std::find(variables_.begin(), variables_.end(), var);
+	if (it == variables_.end()) {
+		error("\" " + var + "\" has not been declared");
+	}
+	auto node = parser_.parseAssignment();
+	ast_.root_->children_.emplace_back(
         new AstNode(std::move(node))
     );
 }

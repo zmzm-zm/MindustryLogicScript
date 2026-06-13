@@ -14,9 +14,9 @@ public:
 	App(int argc, char** argv);
 	using fileList = std::vector<std::string>;
 	void run();
-	
-	void variableDeclaration();
 private:
+	void variableDeclaration();
+	void variableAssignment();
 	void processToken();
 	void error(std::string msg);
 	void setSourceFiles(int argc, char** argv);

@@ -1,3 +1,5 @@
+#include <frontend/ast/nodes/AssignmentNode.hpp>
+#include <memory>
 #include <vector>
 #include <stdexcept>
 #include <iostream>
@@ -5,18 +7,25 @@
 #include <frontend/lexer/Tokenizer.hpp>
 #include <frontend/parser/Parser.hpp>
 #include <frontend/ast/nodes/StatementNode.hpp>
-#include <frontend/ast/nodes/AssignmentNode.hpp>
+#include <frontend/ast/nodes/InitializationNode.hpp>
 #include <frontend/ast/nodes/ExpressionNode.hpp>
+#include <frontend/ast/nodes/AssignmentNode.hpp>
 
 void Parser::setTokenizer(Tokenizer& tokenizer) {
     tokenizer_ = &tokenizer;
 }
-std::unique_ptr<AssignmentNode> Parser::parseAssignment() const {
+std::unique_ptr<StatementNode> Parser::parseInitialization() const {
     tokenizer_->pass();
-    auto variable = tokenizer_->nextToken();
+    auto variable = tokenizer_->nextToken().value_;
     tokenizer_->pass();
-    auto exprNode = parseExpression(variable.value_, 0);
-    return std::make_unique<AssignmentNode>(variable.value_, std::move(exprNode));
+    auto exprNode = parseExpression(variable);
+    return std::make_unique<InitializationNode>(variable, std::move(exprNode));
+}
+std::unique_ptr<StatementNode> Parser::parseAssignment() const {
+	auto variable = tokenizer_->nextToken().value_;
+	tokenizer_->pass();
+	auto exprNode = parseExpression(variable);
+	return std::make_unique<AssignmentNode>(variable, std::move(exprNode));
 }
 ExpressionNode Parser::parseEachExpression() const {
     std::string left = tokenizer_->nextToken().value_;
