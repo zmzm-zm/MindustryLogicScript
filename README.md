@@ -1,9 +1,9 @@
 # Mindustry Logic Script  
-**See an English version at [this](./README_EN.md)** 
-**README最后修改日期26.6.9** 
+**See an English version at [this](./README_EN.md)**  
+**README最后修改日期26.6.19**  
 本仓库提供了一个编译器  
-用于将mls脚本语言转化为Mindustry Logic，即像素工厂逻辑  
-具体信息见[本仓库Wiki](https://zmzm-zm.github.io/MindustryLogicScript)  
+用于将mls脚本语言转化为**Mindustry Logic**，即像素工厂逻辑  
+集体信息见[Wiki](#Wiki)  
 ## 关于mls  
 - **mls不是市面上任何一种语言**  
 可能会有重名，雷同等，纯属意外  
@@ -29,7 +29,7 @@
 - 设置环境变量，使命令可以被找到  
 - 输入编译命令，例如  
 	```console
-	mls output input1.mls input2.msl 
+	mls output input1.mls input2.mls 
 	```
 	第一个参数为输出文件的名字  
 	第二个即以后的为输入文件  
@@ -37,4 +37,49 @@
 - 输出的`output.ml`即为结果  
 	复制粘贴到游戏即可使用
 	> 到目前输出仍为原生Mindustry Logic  
-	后续会加入蓝图功能
+	后续会加入蓝图功能  
+## Wiki
+这个Wki网页逻辑由我和AI完成，使用AI较多便不再赘述  
+**文档完全人工手写**
+具体信息见[本仓库Wiki](https://zmzm-zm.github.io/MindustryLogicScript)  
+如果[打不开Wiki网页](#本地浏览Wiki)  
+### 本地浏览Wiki
+如果你不会魔法打不开Wiki网页  
+可以本地浏览，具体操作如下  
+> 需要使用Linux命令行
+
+1. 获取文件
+	- 浏览器页面下载  
+	![浏览器页面下载](./sources/download_in_page.png)
+	- [Release页面下载](https://github.com/zmzm-zm/MindustryLogicScript/releases)  
+	- git工具下载  
+	```console
+	git clone https://github.com/zmzm-zm/MindustryLogicScript
+	```
+2. 进入wiki文件夹  
+```console
+cd MindustryLogicScript/wiki
+```
+3. 创建本地服务器  
+	- 使用python3  
+	```console
+	python3 -m http.server 8080
+	```
+	没有python请先下载
+	```console
+	sudo apt install python
+	```
+	- 使用nodejs
+	```console
+	http-server
+	```
+	需下载
+	```
+	sudo apt install nodejs npm
+	npm install -g http-server
+	```
+4. 访问
+	- 使用python3  
+	在浏览器网址输入`http://localhost:8000/index.html`
+	- 使用nodejs  
+	在浏览器网址输入`http://127.0.0.1:8080/index.html`
