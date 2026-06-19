@@ -20,7 +20,7 @@
   ```  
   而且还可以封装为函数多次使用  
   像这样  
-  ```
+  ```cpp
   bool isOdd(int num) {
   	return num & 1;
   }

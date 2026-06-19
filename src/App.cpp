@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <memory>
 #include <stdexcept>
 #include <iostream>
 #include <algorithm>
@@ -47,15 +48,16 @@ void App::processToken() {
 
 void App::variableDeclaration() {
 	auto var = tokenizer_.peek(2).value_;
-	auto c = tokenizer_.peek(3).value_;
-	if (c != "=") Logger::error("expect \"=\"");
+	auto c = tokenizer_.peek(3).value_; 
+	if (c != "=" && c != ";") Logger::error("expect \"=\" or \";\"");
 	auto it = find(variables_.begin(), variables_.end(), var);
 	if (it != variables_.end()) {
 		Logger::error("\" " + var + "\" has been declared");
 	}
 	variables_.emplace_back(var);
-	
-	auto node = parser_.parseInitialization();
+	std::unique_ptr<StatementNode> node;
+	if(c == ";") node = parser_.parseDeclaration();
+	else node = parser_.parseInitialization();
     ast_.root_->children_.emplace_back(
         new AstNode(std::move(node))
     );

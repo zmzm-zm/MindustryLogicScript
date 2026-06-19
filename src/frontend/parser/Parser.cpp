@@ -9,6 +9,7 @@
 #include <frontend/ast/nodes/variable/InitializationNode.hpp>
 #include <frontend/ast/nodes/ExpressionNode.hpp>
 #include <frontend/ast/nodes/variable/AssignmentNode.hpp>
+#include <frontend/ast/nodes/variable/DeclarationNode.hpp>
 
 void Parser::setTokenizer(Tokenizer& tokenizer) {
     tokenizer_ = &tokenizer;
@@ -119,4 +120,10 @@ std::unique_ptr<ExpressionNode> Parser::parseExpression(
     }
     
     return std::move(output[0]);
+}
+std::unique_ptr<StatementNode> Parser::parseDeclaration() const {
+	tokenizer_->pass();
+	auto var = tokenizer_->nextToken().value_;
+	tokenizer_->pass();
+	return std::make_unique<DeclarationNode>(var);
 }
