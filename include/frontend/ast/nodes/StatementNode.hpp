@@ -12,9 +12,6 @@ enum class StatementType {
 
 class StatementNode {
 public:
-    virtual ~StatementNode() = default;
-    virtual StatementType getType() const;
     virtual std::string toString() = 0;
-protected:
-    StatementType type_ = StatementType::UNDEFINED;
+    virtual ~StatementNode() = default;
 };

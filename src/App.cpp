@@ -3,12 +3,11 @@
 #include <iostream>
 #include <algorithm>
 #include "App.hpp"
-#include "frontend/ast/nodes/AstNode.hpp"
+#include <frontend/ast/nodes/AstNode.hpp>
 #include <frontend/ast/nodes/StatementNode.hpp>
-#include <frontend/ast/nodes/InitializationNode.hpp>
 #include <backend/logger/Logger.hpp>
 #include <frontend/ast/nodes/ExpressionNode.hpp>
-#include <frontend/ast/nodes/AssignmentNode.hpp>
+#include <frontend/ast/nodes/variable/AssignmentNode.hpp>
 namespace fs = std::filesystem;
 App::App(int argc, char** argv):
 	writer_("output.ml") {
@@ -39,7 +38,7 @@ void App::processToken() {
 				if (currentToken.value_ == "var") variableDeclaration();
 				break;
 			case Token::Type::IDENT:
-				if (currentToken.value_.find(".") == std::string::npos) variableAssignment();
+				if (currentToken.value_.find("(") == std::string::npos) variableAssignment();
 				break;
 		}
 		currentToken = tokenizer_.peek();
@@ -49,10 +48,10 @@ void App::processToken() {
 void App::variableDeclaration() {
 	auto var = tokenizer_.peek(2).value_;
 	auto c = tokenizer_.peek(3).value_;
-	if (c != "=") error("expect \"=\"");
+	if (c != "=") Logger::error("expect \"=\"");
 	auto it = find(variables_.begin(), variables_.end(), var);
 	if (it != variables_.end()) {
-		error("\" " + var + "\" has been declared");
+		Logger::error("\" " + var + "\" has been declared");
 	}
 	variables_.emplace_back(var);
 	
@@ -65,20 +64,15 @@ void App::variableDeclaration() {
 void App::variableAssignment() {
 	auto var = tokenizer_.peek().value_;
 	auto c = tokenizer_.peek(2).value_;
-	if (c != "=") error("expect \"=\"");
+	if (c != "=") Logger::error("expect \"=\"");
 	auto it = std::find(variables_.begin(), variables_.end(), var);
 	if (it == variables_.end()) {
-		error("\" " + var + "\" has not been declared");
+		Logger::error("\" " + var + "\" has not been declared");
 	}
 	auto node = parser_.parseAssignment();
 	ast_.root_->children_.emplace_back(
         new AstNode(std::move(node))
     );
-}
-
-void App::error(std::string msg) {
-	Logger::instance()->error(msg);
-	throw std::runtime_error(msg);
 }
 
 void App::setSourceFiles(int argc, char** argv) {

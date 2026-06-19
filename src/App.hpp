@@ -18,7 +18,6 @@ private:
 	void variableDeclaration();
 	void variableAssignment();
 	void processToken();
-	void error(std::string msg);
 	void setSourceFiles(int argc, char** argv);
 	fileList files_;
 	Parser parser_;

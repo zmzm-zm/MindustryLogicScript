@@ -1,4 +1,3 @@
-#include <frontend/ast/nodes/AssignmentNode.hpp>
 #include <memory>
 #include <vector>
 #include <stdexcept>
@@ -7,9 +6,9 @@
 #include <frontend/lexer/Tokenizer.hpp>
 #include <frontend/parser/Parser.hpp>
 #include <frontend/ast/nodes/StatementNode.hpp>
-#include <frontend/ast/nodes/InitializationNode.hpp>
+#include <frontend/ast/nodes/variable/InitializationNode.hpp>
 #include <frontend/ast/nodes/ExpressionNode.hpp>
-#include <frontend/ast/nodes/AssignmentNode.hpp>
+#include <frontend/ast/nodes/variable/AssignmentNode.hpp>
 
 void Parser::setTokenizer(Tokenizer& tokenizer) {
     tokenizer_ = &tokenizer;

@@ -8,7 +8,6 @@ ExpressionNode::ExpressionNode(const std::string& name,
     std::string value,
     ExpressionNode* right):
     name_(name), left_(left), value_(value), right_(right) {
-    type_ = StatementType::OPERATION;
     size_++;
     operatorType_ = Tokenizer::analyzeOperator(value_);
 }

@@ -34,7 +34,7 @@ bool Tokenizer::isOperator(const std::string& c) noexcept {
 }
 const Token::Type Tokenizer::getToken(std::string value) {
 	if (value == "var" ||
-		value == "fc" ||
+		value == "fn" ||
 		value == "if" ||
 		value == "else" ||
 		value == "for") {
