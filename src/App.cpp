@@ -11,7 +11,7 @@
 #include <frontend/ast/nodes/variable/AssignmentNode.hpp>
 namespace fs = std::filesystem;
 App::App(int argc, char** argv):
-	writer_("output.ml") {
+	writer_(argv[1] + std::string(".ml")) {
 	try {
 		setSourceFiles(argc, argv);
 	} catch (const std::exception& e) {
@@ -22,6 +22,16 @@ App::App(int argc, char** argv):
 	parser_.setTokenizer(tokenizer_);
 	ast_.root_ = new AstNode(nullptr);
 }
+
+void App::setSourceFiles(int argc, char** argv) {
+	for(int i = 2; i < argc; ++i) {
+		if (!fs::is_regular_file(argv[i])) {
+			throw std::runtime_error(std::string("Can not find file\"") +argv[i] + "\"");
+		}
+	}
+	files_.assign(argv + 2, argv + argc);
+}
+
 void App::run() {
 	try {
 		processToken();
@@ -75,13 +85,4 @@ void App::variableAssignment() {
 	ast_.root_->children_.emplace_back(
         new AstNode(std::move(node))
     );
-}
-
-void App::setSourceFiles(int argc, char** argv) {
-	for(int i = 1; i < argc; ++i) {
-		if (!fs::is_regular_file(argv[i])) {
-			throw std::runtime_error(std::string("Can not find file\"") +argv[i] + "\"");
-		}
-	}
-	files_.assign(argv + 1, argv + argc);
 }

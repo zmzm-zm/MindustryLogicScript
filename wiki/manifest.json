@@ -26,6 +26,11 @@
       "title": "Language",
       "children": [
         {
+          "id": "language/grammar",
+          "title": "语法",
+          "file": "docs/language/grammar.md"
+        },
+        {
           "id": "language/introduction",
           "title": "介绍",
           "file": "docs/language/introduction.md"

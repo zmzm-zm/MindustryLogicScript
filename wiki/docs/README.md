@@ -1,5 +1,6 @@
 # 介绍
 这是[MLS](https://github.com/zmzm-zm/MindustryLogicScript)的**Wiki**网页，由markdown文件生成，部署在`GitHub Pages`上  
+网页相关见][这里](#关于这个网页本身)
   
 ## 关于项目
 ### 想法和初衷  
@@ -27,7 +28,7 @@
   ```
   看到了吧，极其简单  
   但在ML中呢?
-  ```
+  ```ml
   set a 3
   op mod isOdd a 2
   jump 5 notEqual isOdd 0

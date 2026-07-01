@@ -18,23 +18,34 @@
    ====================================================== */
    const Theme = (() => {
     const KEY = "wiki-theme";
-  
+
     function get() {
       return localStorage.getItem(KEY) ||
         (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
     }
-  
-    function apply(theme) {
-      document.documentElement.setAttribute("data-theme", theme);
-      localStorage.setItem(KEY, theme);
-      const btn = document.getElementById("theme-toggle");
-      if (!btn) return;
-      btn.querySelector(".icon-sun").style.display  = theme === "dark"  ? "block" : "none";
-      btn.querySelector(".icon-moon").style.display = theme === "light" ? "block" : "none";
-      // logo icon SVG：亮色背景黑，暗色背景白，icon 颜色相反
-      const logoSvg = document.getElementById("logo-svg");
-      if (logoSvg) logoSvg.setAttribute("stroke", theme === "dark" ? "#111111" : "white");
-    }
+
+     function apply(theme) {
+       document.documentElement.setAttribute("data-theme", theme);
+       localStorage.setItem(KEY, theme);
+
+       // 切换 highlight.js 主题
+       const hljsTheme = document.getElementById("hljs-theme");
+       if (hljsTheme) {
+         const themeMap = {
+           dark: "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css",
+           light: "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"
+         };
+         hljsTheme.href = themeMap[theme] || themeMap.light;
+       }
+
+       const btn = document.getElementById("theme-toggle");
+       if (!btn) return;
+       btn.querySelector(".icon-sun").style.display = theme === "dark" ? "block" : "none";
+       btn.querySelector(".icon-moon").style.display = theme === "light" ? "block" : "none";
+
+       const logoSvg = document.getElementById("logo-svg");
+       if (logoSvg) logoSvg.setAttribute("stroke", theme === "dark" ? "#111111" : "white");
+     }
   
     function toggle() { apply(get() === "dark" ? "light" : "dark"); }
   

@@ -39,10 +39,13 @@
 	> 到目前输出仍为原生Mindustry Logic  
 	后续会加入蓝图功能  
 ## Wiki
-这个Wki网页逻辑由我和AI完成，使用AI较多便不再赘述  
-**文档完全人工手写**
+### 声明
+本项目Wiki页面代码在AI辅助下完成，即使用了大语言模型进行代码生成，因为我并不会前端  
+但是所有功能性代码均经过人工测试和审核，所有文档内容，即*.md文件均由人工编写  
+**我想说的是**，如果你喜欢这个风格的网页，可以直接[拿走使用](#使用)  
+**但是必须标明出处**，即使它大部分由AI生成，但是调试，测试，精雕等我仍然付出了心血  
 具体信息见[本仓库Wiki](https://zmzm-zm.github.io/MindustryLogicScript)  
-如果[打不开Wiki网页](#本地浏览Wiki)  
+如果[打不开Wiki网页](#本地浏览Wiki)
 ### 本地浏览Wiki
 如果你不会魔法打不开Wiki网页  
 可以本地浏览，具体操作如下  
@@ -83,3 +86,27 @@ cd MindustryLogicScript/wiki
 	在浏览器网址输入`http://localhost:8000/index.html`
 	- 使用nodejs  
 	在浏览器网址输入`http://127.0.0.1:8080/index.html`
+### 使用
+建议使用node.js  
+在Wiki根目录下运行服务器  
+提前下载nodejs和http-server
+~~~console
+~/wiki $ http-server
+~~~
+如果你修改或增加了md文件，请运行[generate-manifest.js](./wiki/generate-manifest.js)  
+文件内有详细说明  
+运行及其示例输出:
+~~~console
+~/wiki $ node generate-manifest.js
+[generate-manifest] 已生成 manifest.json
+  根目录文件: 1 个
+  分组:       2 个
+  总文档数:   4 篇
+~~~
+> 不过它只支持一层目录，即docs下最多再有一层目录，因为我不确定多层目录如何显示，我也没有这个需求，你想要的话可以尝试编写相关逻辑
+
+#### 可能的疑难杂症
+- 你更改了网页逻辑却没有效果？  
+	如果你是Edge，尝试`ctrl+shift+R`进行强制刷新，或者清除浏览器对此Wiki文件的缓存  
+	其他浏览器我不确定是不是`ctrl+shift+R`，但清除浏览器对此Wiki文件的缓存理应有效  
+	~~这个离谱的Bug浪费了我一个下午的时间，你能想象加了一堆`console.log()但控制台没有任何输出的场景吗`~~  

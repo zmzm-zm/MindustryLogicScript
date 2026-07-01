@@ -47,10 +47,11 @@ std::unique_ptr<ExpressionNode> Parser::parseExpression(
     
     while (true) {
         Token tok = tokenizer_->peek();
-        
-		std::cerr << "Processing token: " << tok.value_ << " type=" << (int)tok.type_ 
+        /*
+		std::cerr << "Processing token: " << tok.value_ << " type=" << (int)tok.type_
 		          << " output.size=" << output.size() 
 		          << " operators.size=" << operators.size() << std::endl;
+    	*/
         if (tok.type_ == Token::Type::NUMBER || tok.type_ == Token::Type::IDENT) {
             tokenizer_->pass();
             output.push_back(std::make_unique<ExpressionNode>(

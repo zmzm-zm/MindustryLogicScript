@@ -1,5 +1,4 @@
 #pragma once
-#include <curses.h>
 #include <frontend/ast/nodes/StatementNode.hpp>
 #include <memory>
 #include <string>
