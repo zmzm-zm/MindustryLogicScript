@@ -30,7 +30,8 @@ void Tokenizer::initializeFile() {
 }
 bool Tokenizer::isOperator(const std::string& c) noexcept {
 	return c == "+" || c == "-" || c == "*" || c == "/" || c == "//" || c == "="
-		|| c == "%" || c == "<" || c == ">" || c == "==" || c == "!=" || c == ";";
+		|| c == "%" || c == "<" || c == ">" || c == "==" || c == "!=" || c == ";"
+		|| c == "&&";
 }
 const Token::Type Tokenizer::getToken(std::string value) {
 	if (value == "var" ||
@@ -57,10 +58,14 @@ const Token Tokenizer::nextToken() {
     }
     if (pos_ >= contents_.size()) return Token("EOF", Token::Type::EOF_);
     
-    char c = contents_[pos_++];
+    std::string c;
+	c = contents_[pos_++];
+	if (c == "&" && contents_[pos_] == '&') {
+		c += contents_[pos_++];
+	}
     std::string value = "";
     
-    if (!isOperator(std::string(1, c))) {
+    if (!isOperator(c)) {
     	
     	value += c;
     	
@@ -80,8 +85,12 @@ void Tokenizer::pass() {
     	pos_++;
     }
 	if (pos_ >= contents_.size()) return;
-	char c = contents_[pos_++];
-	if (!isOperator(std::string(1, c))) {
+	std::string c;
+	c = contents_[pos_++];
+	if (c == "&" && contents_[pos_] == '&') {
+		c += contents_[pos_++];
+	}
+	if (!isOperator(c)) {
 	    while(pos_ < contents_.size()
 	    	&& !isspace(contents_[pos_])
 	    	&& !isOperator(std::string(1, contents_[pos_]))) {
@@ -101,9 +110,13 @@ const Token Tokenizer::peek(int offset) {
 	    	pos++;
 	    }
 	    if (pos >= contents_.size()) return Token("EOF", Token::Type::EOF_);
-	    char c = contents_[pos++];
+		std::string c;
+		c = contents_[pos_++];
+		if (c == "&" && contents_[pos_] == '&') {
+			c += contents_[pos_++];
+		}
 	    value = "";
-	    if (!isOperator(std::string(1, c))) {
+	    if (!isOperator(c)) {
 	    	value += c;
 		    while(pos < contents_.size()
 		    	&& !isspace(contents_[pos])

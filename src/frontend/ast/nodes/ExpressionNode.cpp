@@ -1,3 +1,5 @@
+#include <functional>
+#include <vector>
 #include <frontend/ast/nodes/ExpressionNode.hpp>
 #include <frontend/lexer/Tokenizer.hpp>
 
@@ -16,46 +18,7 @@ ExpressionNode::~ExpressionNode() {
 }
 
 std::string ExpressionNode::toString() {
-    std::vector<std::string> lines;
-    
-    std::function<std::string(const ExpressionNode*)> traverse = 
-        [&](const ExpressionNode* node) -> std::string {
-            if (!node) return "";
-            
-            
-            if (!node->left_ && !node->right_) {
-                return node->value_;
-            }
-            
-            std::string leftVar = traverse(node->left_);
-            std::string rightVar = traverse(node->right_);
-            
-            std::string op;
-            if (node->value_ == "+") op = "add";
-            else if (node->value_ == "-") op = "sub";
-            else if (node->value_ == "*") op = "mul";
-            else if (node->value_ == "/") op = "div";
-            else if (node->value_ == "%") op = "mod";
-            else op = node->value_;
-            
-            lines.push_back("op " + op + " " + node->name_ + " " + leftVar + " " + rightVar);
-            
-            return node->name_;
-        };
-    
-    std::string resultVar = traverse(this);
-    
-    
-    if (lines.empty()) {
-        
-        return "";
-    }
-    
-    std::string result;
-    for (const auto& line : lines) {
-        result += line + "\n";
-    }
-    return result;
+    return "ExpressionNode::toString: An Unexpected calling";
 }
 const std::string& ExpressionNode::getValue() const {
     return value_;

@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include <functional>
 #include <frontend/ast/nodes/StatementNode.hpp>
 enum class OperatorType;
 
@@ -21,7 +20,7 @@ public:
     OperatorType getOperatorType() const;
     const std::string& getName() const;
 
-private:
+protected:
     friend class Parser;
     static size_t size_;
     std::string name_ = "nana";
