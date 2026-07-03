@@ -111,9 +111,9 @@ const Token Tokenizer::peek(int offset) {
 	    }
 	    if (pos >= contents_.size()) return Token("EOF", Token::Type::EOF_);
 		std::string c;
-		c = contents_[pos_++];
-		if (c == "&" && contents_[pos_] == '&') {
-			c += contents_[pos_++];
+		c = contents_[pos++];
+		if (c == "&" && contents_[pos] == '&') {
+			c += contents_[pos++];
 		}
 	    value = "";
 	    if (!isOperator(c)) {

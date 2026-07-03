@@ -132,7 +132,7 @@ std::unique_ptr<ConditionNode> Parser::parseCondition() const {
 								idents[0],
 								nullptr);
 	// 构建 操作数的节点，叶子节点
-	std::vector<ConditionNode*> identNodes;
+	std::vector<ConditionNode> identNodes;
 	for (auto & ident : idents) {
 		identNodes.emplace_back(
 			"NA",
@@ -143,9 +143,9 @@ std::unique_ptr<ConditionNode> Parser::parseCondition() const {
 	// 只有一个单元时 直接返回
 	if (unitNum == 1) return std::make_unique<ConditionNode>(
 								"NA",
-								identNodes[0],
+								&identNodes[0],
 								operators[0],
-								identNodes[1]);
+								&identNodes[1]);
 	// 把 叶子节点 缀在 每个单元节点的两枝
 	// 运算符数量 等于 单元数
 	// 叶子数 等于 二倍的单元数
@@ -153,32 +153,32 @@ std::unique_ptr<ConditionNode> Parser::parseCondition() const {
 	 * identNodes[(i + 1) * 2 - 2] = i * 2
 	 * identNodes[(i + 1) * 2 - 1] = i * 2 + 1
 	 */
-	std::vector<ConditionNode*> conditions;
+	std::vector<ConditionNode> conditions;
 	for (int i = 0; i < unitNum; ++i) {
 		conditions.emplace_back(
 			"NA",
-			identNodes[i * 2],
+			&identNodes[i * 2],
 			operators[i],
-			identNodes[i * 2 + 1]);
+			&identNodes[i * 2 + 1]);
 	}
 	// 联系单元节点
 	// 先把第一第二个联系起来
 	// 随后联系前一个联系节点和后一个单元节点 因此循环次数 - 2
 	// 逻辑运算符数 = 单元数 - 1
-	std::vector<ConditionNode*> output;
+	std::vector<ConditionNode> output;
 	output.emplace_back(
 			"NA",
-			conditions[0],
+			&conditions[0],
 			logics[0],
-			conditions[1]);
+			&conditions[1]);
 	for (int i = 2; i < unitNum; ++i) {
 		output.emplace_back(
 			"NA",
-			output[i - 2],
+			&output[i - 2],
 			logics[i - 1],
-			conditions[i]);
+			&conditions[i]);
 	}
-	return std::make_unique<ConditionNode>(*output[output.size() - 1]);
+	return std::make_unique<ConditionNode>(output[output.size() - 1]);
 }
 
 
