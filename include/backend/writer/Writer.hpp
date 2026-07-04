@@ -5,7 +5,7 @@
 namespace fs = std::filesystem;
 class Writer {
 public:
-	Writer(std::string fileName);
+	explicit Writer(const std::string& fileName);
 	void write(const std::string& code);
 private:
 	std::ofstream targetFile_;

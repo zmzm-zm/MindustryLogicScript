@@ -1,16 +1,11 @@
 #include <functional>
-#include <vector>
 #include <frontend/ast/nodes/ExpressionNode.hpp>
 #include <frontend/lexer/Tokenizer.hpp>
-
-size_t ExpressionNode::size_ = 0;
-
 ExpressionNode::ExpressionNode(const std::string& name,
     ExpressionNode* left,
     std::string value,
     ExpressionNode* right):
-    name_(name), left_(left), value_(value), right_(right) {
-    size_++;
+    left_(left), right_(right), name_(name), value_(std::move(value)) {
     operatorType_ = Tokenizer::analyzeOperator(value_);
 }
 

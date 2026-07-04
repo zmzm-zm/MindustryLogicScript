@@ -19,10 +19,10 @@ Logger& Logger::instance() {
     static Logger instance;
     return instance;
 }
-spdlog::logger* Logger::operator->() {
+spdlog::logger* Logger::operator->() const {
     return logger_;
 }
-void Logger::error(std::string msg) {
+void Logger::error(const std::string& msg) {
 	instance()->error(msg);
 	throw std::runtime_error(msg);
 }

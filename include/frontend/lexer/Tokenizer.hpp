@@ -16,11 +16,11 @@ enum class OperatorType {
 class Tokenizer {
 	enum class Strategy;
 public:
-	static OperatorType analyzeOperator(const std::string& operator__);
-	void setCurrentFile(const std::string& file) noexcept;
+	static OperatorType analyzeOperator(std::string_view operator_) noexcept;
+	void setCurrentFile(std::string file) noexcept;
 	void initializeFile();
-	bool isOperator(const std::string& c) noexcept;
-	const Token::Type getToken(std::string value);
+	static bool isOperator(std::string_view c) noexcept;
+	static Token::Type getToken(std::string_view value);
 	/**
 	 * @defgroup TokenGetter Token获取器
 	 * @brief 获取Token的函数，有多种不同的模式
@@ -33,13 +33,13 @@ public:
 	 * @brief Token读取的基函数
 	 * @details 合并了nextToken pass peek中重复的逻辑
 	 */
-	const Token readToken(Strategy strategy, uint8_t offset = 1);
+	Token readToken(Strategy strategy, uint8_t offset = 1);
 	/**
 	 * @brief 获取下一个Token并返回
 	 * @return 一个常量Token
 	 * @note 此函数会递增当前在文件的位置
 	 */
-	const Token nextToken();
+	Token nextToken();
 	/**
 	 * @brief 跳过下一个Token
 	 * @note 此函数会递增当前在文件的位置
@@ -51,7 +51,7 @@ public:
 	 * @return 一个常量Token
 	 * @note 此函数不会递增当前在文件的位置
 	 */
-	const Token peek(uint8_t offset = 1);
+	Token peek(const uint8_t offset = 1);
 	/** @} */
 private:
 	enum class Strategy {

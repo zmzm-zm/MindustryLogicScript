@@ -2,8 +2,8 @@
 #include <string>
 #include <frontend/ast/nodes/variable/VariableNode.hpp>
 
-class InitializationNode : public VariableNode {
+class InitializationNode final: public VariableNode {
 public:
-	InitializationNode(const std::string& variable, std::unique_ptr<ExpressionNode> value);
+	InitializationNode(std::string variable, std::unique_ptr<ExpressionNode> value);
     std::string toString() override;
 };

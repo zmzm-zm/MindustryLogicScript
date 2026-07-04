@@ -18,7 +18,7 @@ std::string ConditionNode::toString() {
     else Logger::error("Unknown operator: " + value_);
     return op + " " + left_->toString() + " " + right_->toString();
 }
-void ConditionNode::setNum(unsigned short num) noexcept {
+void ConditionNode::setNum(const unsigned short num) noexcept {
     num_ = num;
 }
 unsigned short ConditionNode::getNum(unsigned short& num) const noexcept {

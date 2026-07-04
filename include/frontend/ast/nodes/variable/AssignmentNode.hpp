@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
 #include <frontend/ast/nodes/variable/VariableNode.hpp>
-class AssignmentNode : public VariableNode {
+class AssignmentNode final: public VariableNode {
 public:
-	AssignmentNode(const std::string& variable, std::unique_ptr<ExpressionNode> value);
+	AssignmentNode(std::string variable, std::unique_ptr<ExpressionNode> value);
 	std::string toString() override;
 };

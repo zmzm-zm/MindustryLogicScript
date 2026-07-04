@@ -4,5 +4,4 @@
 class CodeGenerator {
 public:
 	static std::string generate(const AstNode* node);
-private:
 };

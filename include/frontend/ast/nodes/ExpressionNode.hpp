@@ -22,10 +22,9 @@ public:
 
 protected:
     friend class Parser;
-    static size_t size_;
-    std::string name_ = "nana";
     ExpressionNode* left_ = nullptr;
-    std::string value_ = "^v^";
     ExpressionNode* right_ = nullptr;
+    std::string name_ = "nana";
+    std::string value_ = "^v^";
     OperatorType operatorType_ = static_cast<OperatorType>(0);
 };

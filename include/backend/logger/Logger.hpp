@@ -9,8 +9,8 @@ public:
     Logger& operator=(const Logger&) = delete;
     Logger(Logger&&) = delete;
     Logger& operator=(Logger&&) = delete;
-    spdlog::logger* operator->();
-	static void error(std::string msg);
+    spdlog::logger* operator->() const;
+	static void error(const std::string& msg);
 private:
     Logger();
     ~Logger();

@@ -2,7 +2,8 @@
 #include <frontend/ast/nodes/variable/AssignmentNode.hpp>
 #include <string>
 #include <utility>
-AssignmentNode::AssignmentNode(const std::string& variable, std::unique_ptr<ExpressionNode> value): VariableNode(variable, std::move(value)) {}
+AssignmentNode::AssignmentNode(std::string variable, std::unique_ptr<ExpressionNode> value)
+: VariableNode(std::move(variable), std::move(value)) {}
 std::string AssignmentNode::toString() {
 	auto exprCode = value_->toString();
 	if (exprCode.empty()) return "set " + variable_  + " " + value_->getValue() + "\n";

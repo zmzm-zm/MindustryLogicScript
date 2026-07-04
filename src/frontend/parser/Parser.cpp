@@ -112,7 +112,7 @@ std::unique_ptr<ConditionNode> Parser::parseCondition() const {
 	std::vector<std::string> operators;
 	std::vector<std::string> logics;
 	std::vector<std::string> idents;
-	int index = 0;
+	uint8_t index = 0;
 	auto nextToken = tokenizer_->nextToken();
 	while (nextToken.value_ != ")") {
 		if (nextToken.type_ == Token::Type::OPERATOR) {
@@ -124,7 +124,7 @@ std::unique_ptr<ConditionNode> Parser::parseCondition() const {
 		nextToken = tokenizer_->nextToken();
 	}
 	// 计算有多少个比较单元 比如 a < b 是一个单元
-	int unitNum = operators.size();
+	uint8_t unitNum = operators.size();
 	// 没有运算时，直接返回变量名 针对if (booleanValue)
 	if (unitNum == 0) return std::make_unique<ConditionNode>(
 								"NA",
@@ -154,7 +154,7 @@ std::unique_ptr<ConditionNode> Parser::parseCondition() const {
 	 * identNodes[(i + 1) * 2 - 1] = i * 2 + 1
 	 */
 	std::vector<ConditionNode> conditions;
-	for (int i = 0; i < unitNum; ++i) {
+	for (uint8_t i = 0; i < unitNum; ++i) {
 		conditions.emplace_back(
 			"NA",
 			&identNodes[i * 2],
@@ -171,7 +171,7 @@ std::unique_ptr<ConditionNode> Parser::parseCondition() const {
 			&conditions[0],
 			logics[0],
 			&conditions[1]);
-	for (int i = 2; i < unitNum; ++i) {
+	for (uint8_t i = 2; i < unitNum; ++i) {
 		output.emplace_back(
 			"NA",
 			&output[i - 2],

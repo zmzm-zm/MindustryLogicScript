@@ -5,7 +5,7 @@
 #include <frontend/ast/nodes/ExpressionNode.hpp>
 class VariableNode : public StatementNode {
 public:
-	VariableNode(const std::string& variable, std::unique_ptr<ExpressionNode> value);
+	VariableNode(std::string variable, std::unique_ptr<ExpressionNode> value);
 	virtual std::string getVar() const;
 protected:
 	std::string variable_ = "^v^";

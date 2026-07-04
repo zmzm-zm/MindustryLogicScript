@@ -4,7 +4,7 @@ std::string CodeGenerator::generate(const AstNode* node) {
 	std::string selfCode = "";
 	std::string childrenCode = "";
 	if (!(node->statement_ == nullptr))  selfCode = statement->toString();
-	for(auto* each: node->children_) {
+	for(const auto* each: node->children_) {
 		childrenCode += generate(each);
 	}
 	return selfCode + childrenCode;
