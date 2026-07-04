@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <cstddef>
+#include <cstdint>
 #include <frontend/lexer/Token.hpp>
 
 enum class OperatorType {
@@ -13,6 +14,7 @@ enum class OperatorType {
 };
 
 class Tokenizer {
+	enum class Strategy;
 public:
 	static OperatorType analyzeOperator(const std::string& operator__);
 	void setCurrentFile(const std::string& file) noexcept;
@@ -27,6 +29,11 @@ public:
 	 * @addtogroup TokenGetter
 	 * @{
 	 */
+	/**
+	 * @brief Token读取的基函数
+	 * @details 合并了nextToken pass peek中重复的逻辑
+	 */
+	const Token readToken(Strategy strategy, uint8_t offset = 1);
 	/**
 	 * @brief 获取下一个Token并返回
 	 * @return 一个常量Token
@@ -44,9 +51,14 @@ public:
 	 * @return 一个常量Token
 	 * @note 此函数不会递增当前在文件的位置
 	 */
-	const Token peek(int offset = 1);
+	const Token peek(uint8_t offset = 1);
 	/** @} */
 private:
+	enum class Strategy {
+		CONSUMPTIVE,
+		NON_CONSUMPTIVE,
+		NO_RETURN
+	};
 	std::string currentFileName_ = "^v^";
 	std::ifstream currentFile_;
 	std::string contents_ = "^v^";

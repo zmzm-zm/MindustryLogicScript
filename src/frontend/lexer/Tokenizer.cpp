@@ -52,80 +52,55 @@ const Token::Type Tokenizer::getToken(std::string value) {
 		return Token::Type::IDENT;
 	}
 }
-const Token Tokenizer::nextToken() {
-    while (pos_ < contents_.size() && isspace(contents_[pos_])) {
-    	pos_++;
-    }
-    if (pos_ >= contents_.size()) return Token("EOF", Token::Type::EOF_);
-    
-    std::string c;
-	c = contents_[pos_++];
-	if (c == "&" && contents_[pos_] == '&') {
-		c += contents_[pos_++];
+const Token Tokenizer::readToken(Strategy strategy, uint8_t offset) {
+	std::size_t posCopy = pos_;
+	std::size_t* pos;
+	if (strategy == Strategy::NON_CONSUMPTIVE) {
+		pos = &posCopy;
+	} else {
+		pos = &pos_;
 	}
-    std::string value = "";
-    
-    if (!isOperator(c)) {
-    	
-    	value += c;
-    	
-	    while(pos_ < contents_.size()
-	    	&& !isspace(contents_[pos_])
-	    	&& !isOperator(std::string(1, contents_[pos_]))) {
-	        value += contents_[pos_++];
-	    }
-    } else value = c;
-    auto type = getToken(value);
-	Logger::instance()->debug("Tokenizer::nextToken(): " + value);
-    return Token(value, type);
-}
-void Tokenizer::pass() {
-	
-	while (pos_ < contents_.size() && isspace(contents_[pos_])) {
-    	pos_++;
-    }
-	if (pos_ >= contents_.size()) return;
-	std::string c;
-	c = contents_[pos_++];
-	if (c == "&" && contents_[pos_] == '&') {
-		c += contents_[pos_++];
-	}
-	if (!isOperator(c)) {
-	    while(pos_ < contents_.size()
-	    	&& !isspace(contents_[pos_])
-	    	&& !isOperator(std::string(1, contents_[pos_]))) {
-	    	
-	        pos_++;
-	    }
-    }
-	Logger::instance()->debug("Tokenizer::pass()");
-}
-const Token Tokenizer::peek(int offset) {
-	
-	std::size_t pos = pos_;
 	std::string value = "";
 	Token::Type type;
 	for (int i = 0; i < offset; ++i) {
-		while (pos < contents_.size() && isspace(contents_[pos])) {
-	    	pos++;
-	    }
-	    if (pos >= contents_.size()) return Token("EOF", Token::Type::EOF_);
-		std::string c;
-		c = contents_[pos++];
-		if (c == "&" && contents_[pos] == '&') {
-			c += contents_[pos++];
+		while (*pos < contents_.size() && isspace(contents_[*pos])) {
+			(*pos)++;
 		}
-	    value = "";
-	    if (!isOperator(c)) {
-	    	value += c;
-		    while(pos < contents_.size()
-		    	&& !isspace(contents_[pos])
-		    	&& !isOperator(std::string(1, contents_[pos]))) {
-		        value += contents_[pos++];
-		    }
-	    } else value = c;    
-	    type = getToken(value);
-		Logger::instance()->debug("Tokenizer::peek(): " + value);
+		if (*pos >= contents_.size()) return Token("EOF", Token::Type::EOF_);
+		std::string c;
+		c = contents_[(*pos)++];
+		if (c == "&" && contents_[*pos] == '&') {
+			c += contents_[(*pos)++];
+		}
+		value = "";
+		if (!isOperator(c)) {
+			value += c;
+			while(*pos < contents_.size()
+				&& !isspace(contents_[*pos])
+				&& !isOperator(std::string(1, contents_[*pos]))) {
+				value += contents_[(*pos)++];
+				}
+		} else value = c;
+		type = getToken(value);
 	}
-    return Token(value, type);
+	return Token(value, type);
+}
+
+
+const Token Tokenizer::nextToken() {
+	auto token = readToken(Strategy::CONSUMPTIVE);
+	Logger::instance()->debug("Tokenizer::nextToken(): " + token.value_);
+	return token;
+
+}
+void Tokenizer::pass() {
+	auto token = readToken(Strategy::CONSUMPTIVE);
+	Logger::instance()->debug("Tokenizer::pass(): " + token.value_);
+
+}
+const Token Tokenizer::peek(uint8_t offset) {
+	auto token = readToken(Strategy::NON_CONSUMPTIVE, offset);
+	Logger::instance()->debug("Tokenizer::peek(): " + token.value_);
+    return token;
+
 }
