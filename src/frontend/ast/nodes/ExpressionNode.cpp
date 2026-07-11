@@ -2,10 +2,10 @@
 #include <frontend/ast/nodes/ExpressionNode.hpp>
 #include <frontend/lexer/Tokenizer.hpp>
 ExpressionNode::ExpressionNode(const std::string& name,
-    ExpressionNode* left,
+    std::unique_ptr<ExpressionNode> left,
     std::string value,
-    ExpressionNode* right):
-    left_(left), right_(right), name_(name), value_(std::move(value)) {
+    std::unique_ptr<ExpressionNode> right):
+    left_(std::move(left)), right_(std::move(right)), name_(name), value_(std::move(value)) {
     operatorType_ = Tokenizer::analyzeOperator(value_);
 }
 
@@ -20,19 +20,19 @@ const std::string& ExpressionNode::getValue() const {
 }
 
 ExpressionNode* ExpressionNode::getLeft() const {
-    return left_;
+    return left_.get();
 }
 
-void ExpressionNode::setLeft(ExpressionNode* left) {
-    left_ = left;
+void ExpressionNode::setLeft(std::unique_ptr<ExpressionNode> left) {
+    left_ = std::move(left);
 }
 
 ExpressionNode* ExpressionNode::getRight() const {
-    return right_;
+    return right_.get();
 }
 
-void ExpressionNode::setRight(ExpressionNode* right) {
-    right_ = right;
+void ExpressionNode::setRight(std::unique_ptr<ExpressionNode> right) {
+    right_ = std::move(right);
 }
 
 OperatorType ExpressionNode::getOperatorType() const {

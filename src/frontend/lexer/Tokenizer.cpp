@@ -12,10 +12,10 @@ Token::Token(std::string value, Token::Type type): value_(std::move(value)), typ
 
 OperatorType Tokenizer::analyzeOperator(std::string_view operator_) noexcept {
 	if (operator_ == "*") return OperatorType::Multiplication;
-	else if (operator_ == "/") return OperatorType::Division;
-	else if (operator_ == "+") return OperatorType::Addition;
-	else if (operator_ == "-") return OperatorType::Subtraction;
-	else return OperatorType::Undefined;
+	if (operator_ == "/") return OperatorType::Division;
+	if (operator_ == "+") return OperatorType::Addition;
+	if (operator_ == "-") return OperatorType::Subtraction;
+	return OperatorType::Undefined;
 }
 void Tokenizer::setCurrentFile(std::string file) noexcept {
 	currentFileName_ = std::move(file);
@@ -31,7 +31,7 @@ void Tokenizer::initializeFile() {
 bool Tokenizer::isOperator(std::string_view c) noexcept {
 	return c == "+" || c == "-" || c == "*" || c == "/" || c == "//" || c == "="
 		|| c == "%" || c == "<" || c == ">" || c == "==" || c == "!=" || c == ";"
-		|| c == "&&";
+		|| c == "&&" || c == "(" || c == ")" || c == "{" || c == "}";
 }
 Token::Type Tokenizer::getToken(const std::string_view value) {
 	if (value == "var" ||
@@ -62,7 +62,8 @@ Token Tokenizer::readToken(const Strategy strategy, const uint8_t offset) {
 		if (*pos >= contents_.size()) return {"EOF", Token::Type::EOF_};
 		std::string c;
 		c = contents_[(*pos)++];
-		if (c == "&" && contents_[*pos] == '&') {
+		if (c == "&" && contents_[*pos] == '&'
+			|| c == "=" && contents_[*pos] == '=') {
 			c += contents_[(*pos)++];
 		}
 		value = "";
@@ -79,21 +80,21 @@ Token Tokenizer::readToken(const Strategy strategy, const uint8_t offset) {
 	return {value, type};
 }
 
-Token Tokenizer::nextToken() {
+Token Tokenizer::next(std::string name, int line) {
 	auto token = readToken(Strategy::CONSUMPTIVE);
-	Logger::instance()->debug("Tokenizer::nextToken(): " + token.value_);
+	if (token.value_ != "EOF") Logger::instance()->debug(name + "-" + std::to_string(line) + "-next: " + token.value_);
 	return token;
 
 }
 void Tokenizer::pass() {
 	const auto token = readToken(Strategy::CONSUMPTIVE);
-	Logger::instance()->debug("Tokenizer::pass(): " + token.value_);
+	Logger::instance()->debug(std::to_string(pos_) + "-pass: " + token.value_);
 
 }
 
 Token Tokenizer::peek(const uint8_t offset) {
 	auto token = readToken(Strategy::NON_CONSUMPTIVE, offset);
-	Logger::instance()->debug("Tokenizer::peek(): " + token.value_);
+	Logger::instance()->debug(std::to_string(pos_) + "-peek: " + token.value_);
     return token;
 
 }

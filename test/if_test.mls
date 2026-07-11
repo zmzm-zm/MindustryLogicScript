@@ -1,0 +1,19 @@
+var a = 5;
+var b = 2 + 3 * 2;
+var c = 8;
+var d;
+var e;
+var f;
+if (a < 10) {
+    if (b > 1) {
+        if ( c < 5) {
+            d = 5;
+        }
+        var g = 4 * 7 - 9;
+        if (true) {
+            g = 7;
+        }
+        e = 54;
+    }
+    f  = 7;
+}

@@ -5,6 +5,7 @@
 
 class AstNode {
 public:
+	AstNode();
 	AstNode(std::unique_ptr<StatementNode> statementNode);
     std::vector<AstNode*> children_;
     std::unique_ptr<StatementNode> statement_;

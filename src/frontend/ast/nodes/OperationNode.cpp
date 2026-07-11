@@ -2,8 +2,12 @@
 #include <vector>
 #include <frontend/ast/nodes/OperationNode.hpp>
 #include <frontend/ast/nodes/ExpressionNode.hpp>
-OperationNode::OperationNode(const std::string& name, ExpressionNode* left, std::string value, ExpressionNode* right)
-: ExpressionNode(name, left, std::move(value), right)
+OperationNode::OperationNode(
+    const std::string& name,
+    std::unique_ptr<ExpressionNode> left,
+    std::string value,
+    std::unique_ptr<ExpressionNode> right)
+: ExpressionNode(name, std::move(left), std::move(value), std::move(right))
 {
 }
 
