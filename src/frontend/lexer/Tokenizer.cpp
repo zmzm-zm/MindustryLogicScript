@@ -38,6 +38,7 @@ Token::Type Tokenizer::getToken(const std::string_view value) {
 	if (value == "var" ||
 		value == "fn" ||
 		value == "if" ||
+		value == "while" ||
 		value == "else" ||
 		value == "for") return Token::Type::KEYWORD;
 	if (isdigit(value[0])) return Token::Type::NUMBER;

@@ -15,6 +15,7 @@
 #include <common/LineCounter.hpp>
 #include <frontend/ast/nodes/AstNode.hpp>
 #include <frontend/ast/nodes/controlFlow/IfNode.hpp>
+#include <frontend/ast/nodes/controlFlow/WhileNode.hpp>
 
 Parser::Parser() {}
 Parser::~Parser() {}
@@ -32,6 +33,7 @@ void Parser::process() {
 		case Token::Type::KEYWORD:
 			if (currentToken.value_ == "var") variableDeclaration();
 			if (currentToken.value_ == "if") If();
+			if (currentToken.value_ == "while") While();
 			break;
 		case Token::Type::IDENT:
 			if (currentToken.value_.find("(") == std::string::npos) variableAssignment();
@@ -266,6 +268,25 @@ std::unique_ptr<ControlFlow> Parser::parseIf() {
 	rootNodes_.pop();
 	return std::move(node);
 }
+std::unique_ptr<ControlFlow> Parser::parseWhile() {
+	tokenizer_->pass(); // while
+	tokenizer_->pass(); // (
+	auto condition = parseCondition();
+	std::string conditionStr = condition->toString();
+	int conditionLine = std::ranges::count(conditionStr, '\n');
+	for (uint8_t i = 0; i < conditionLine; ++i) LineCounter::increment();
+	tokenizer_->pass(); // {
+	rootNodes_.push(std::make_unique<AstNode>());
+	LineCounter::increment();
+	auto cureentLine = LineCounter::getLineCount();
+	process();
+	LineCounter::increment();
+	LineCounter::increment();
+	tokenizer_->pass(); // }
+	auto node = std::make_unique<WhileNode>(std::move(condition), std::move(rootNodes_.top()), cureentLine);
+	rootNodes_.pop();
+	return std::move(node);
+}
 void Parser::variableDeclaration() {
 	auto var = tokenizer_->peek(2).value_;
 	auto c = tokenizer_->peek(3).value_;
@@ -304,5 +325,11 @@ void Parser::If() {
 	auto ifNode = parseIf();
 	rootNodes_.top()->children_.emplace_back(
 		new AstNode(std::move(ifNode))
+	);
+}
+void Parser::While() {
+	auto whileNode = parseWhile();
+	rootNodes_.top()->children_.emplace_back(
+		new AstNode(std::move(whileNode))
 	);
 }

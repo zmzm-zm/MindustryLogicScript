@@ -34,17 +34,22 @@ std::vector<ConditionNode::Unit> ConditionNode::flatten(ExpressionNode* node) {
     const auto& val = node->getValue();
     // 比较运算节点
     if (val != "&&" && val != "||") {
-        // 生成比较指令内容
         std::string content = "op " + getOpStr(val)
                             + " {} "
                             + node->getLeft()->getValue()
                             + " " + node->getRight()->getValue();
-        // operator_ 暂时设为 AND，后续会被父节点修正
         return { Unit(std::move(content), LogicOperator::AND) };
     }
 
     // 逻辑运算节点
     LogicOperator curOp = getLogicOp(val);
+
+    // 翻转逻辑连接词
+    if (curOp == LogicOperator::AND)
+        curOp = LogicOperator::OR;
+    else if (curOp == LogicOperator::OR)
+        curOp = LogicOperator::AND;
+
     auto leftUnits  = flatten(node->getLeft());
     auto rightUnits = flatten(node->getRight());
 
