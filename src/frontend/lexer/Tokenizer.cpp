@@ -31,7 +31,8 @@ void Tokenizer::initializeFile() {
 bool Tokenizer::isOperator(std::string_view c) noexcept {
 	return c == "+" || c == "-" || c == "*" || c == "/" || c == "//" || c == "="
 		|| c == "%" || c == "<" || c == ">" || c == "==" || c == "!=" || c == ";"
-		|| c == "&&" || c == "(" || c == ")" || c == "{" || c == "}";
+		|| c == "&&" || c == "||" || c == "(" || c == ")" || c == "{" || c == "}"
+		|| c == "!=" || c == "<=" || c == ">=";
 }
 Token::Type Tokenizer::getToken(const std::string_view value) {
 	if (value == "var" ||
@@ -63,7 +64,11 @@ Token Tokenizer::readToken(const Strategy strategy, const uint8_t offset) {
 		std::string c;
 		c = contents_[(*pos)++];
 		if (c == "&" && contents_[*pos] == '&'
-			|| c == "=" && contents_[*pos] == '=') {
+			|| c == "=" && contents_[*pos] == '='
+			|| c == "|" && contents_[*pos] == '|'
+			|| c == "!" && contents_[*pos] == '='
+			|| c == "<" && contents_[*pos] == '='
+			|| c == ">" && contents_[*pos] == '=') {
 			c += contents_[(*pos)++];
 		}
 		value = "";

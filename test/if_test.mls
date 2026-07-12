@@ -4,16 +4,31 @@ var c = 8;
 var d;
 var e;
 var f;
+var g;
+var h = 3 + 4 * 2;
 if (a < 10) {
-    if (b > 1) {
-        if ( c < 5) {
-            d = 5;
-        }
-        var g = 4 * 7 - 9;
-        if (true) {
-            g = 7;
-        }
-        e = 54;
-    }
-    f  = 7;
+    f = 1;
 }
+if (b > 0 && c < 99 || a == 5) {
+    d = 2;
+    if (true) {
+        e = 3;
+    }
+}
+if (a <= 10 && b >= 5 && c != 0) {
+    f = 4;
+}
+if (a > 100 || b < 0 || c == 1) {
+    g = 5;
+}
+if (a < 10 || b > 20 && c < 30) {
+    h = 6;
+}
+var x = 1;
+var y = 2;
+if (x < y)  { x = 10; }
+if (x <= y) { x = 11; }
+if (x > y)  { x = 12; }
+if (x >= y) { x = 13; }
+if (x == y) { x = 14; }
+if (x != y) { x = 15; }

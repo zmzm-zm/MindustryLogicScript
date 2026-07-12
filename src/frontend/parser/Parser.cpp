@@ -252,11 +252,15 @@ std::unique_ptr<ControlFlow> Parser::parseIf() {
 	tokenizer_->pass(); // if
 	tokenizer_->pass(); // (
 	auto condition = parseCondition();
+	std::string conditionStr = condition->toString();
+	int conditionLine = std::ranges::count(conditionStr, '\n');
+	for (uint8_t i = 0; i < conditionLine; ++i) LineCounter::increment();
 	tokenizer_->pass(); // {
 	rootNodes_.push(std::make_unique<AstNode>());
 	LineCounter::increment();
 	auto cureentLine = LineCounter::getLineCount();
 	process();
+	LineCounter::increment();
 	tokenizer_->pass(); // }
 	auto node = std::make_unique<IfNode>(std::move(condition), std::move(rootNodes_.top()), cureentLine);
 	rootNodes_.pop();
