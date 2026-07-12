@@ -6,6 +6,6 @@ bin/
 TODO.md
 doxygen_doc/html/*
 !doxygen_doc/html/.gitkeep
-/cmake-build-debug/
+/cmake-build-*/
 .cache/
 compile_commands.json
