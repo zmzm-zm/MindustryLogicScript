@@ -1,0 +1,33 @@
+var a = 0;
+~ test0
+var b = 0;
+var c = 0; ~ test1
+while (a < 10) { ~ test2
+    while (b < 10) { ~ test3
+        b = b + 2;
+    } ~ test4
+    a = a + 1; ~ test5
+    ~ test6
+}
+while (c < ~ test 9 ~ 20) {
+    c = c + 1;
+}
+var d = 4;
+var e = 7;
+var f = 2;
+var g;
+var h;
+while (~ test 12 ~ d < 10 && ~ test 10 ~ e <= 20 && f > 1) {
+    e = e + 1;
+    while (d < 50 || f < 10) {
+        d = f + 3;
+        f = f ~ test 11 ~ + 1;
+        if (f > e) { ~ test 9
+            ~ test 7
+            g = 10;
+        }
+    }
+    if (e > d) {
+        h = 99;
+    }
+}

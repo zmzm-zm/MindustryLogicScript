@@ -46,6 +46,7 @@ Token::Type Tokenizer::getToken(const std::string_view value) {
 	if (value[0] == '"') return Token::Type::STRING;
 	if (isOperator(value)) return Token::Type::OPERATOR;
 	if (value == ";") return Token::Type::END;
+	if (value == "~") return Token::Type::COMMENT;
 	return Token::Type::IDENT;
 }
 Token Tokenizer::readToken(const Strategy strategy, const uint8_t offset) {
@@ -59,8 +60,20 @@ Token Tokenizer::readToken(const Strategy strategy, const uint8_t offset) {
 	std::string value;
 	Token::Type type = Token::Type::UNDEFINED;
 	for (uint8_t i = 0; i < offset; ++i) {
-		while (*pos < contents_.size() && isspace(contents_[*pos])) {
-			(*pos)++;
+		while (*pos < contents_.size()) {
+			if (isspace(contents_[*pos])) {
+				(*pos)++;
+			} else if (contents_[*pos] == '~') {
+				(*pos)++;
+				while (*pos < contents_.size()
+					   && contents_[*pos] != '\n'
+					   && contents_[*pos] != '~') {
+					(*pos)++;
+					   }
+				if (*pos < contents_.size()) (*pos)++;
+			} else {
+				break;
+			}
 		}
 		if (*pos >= contents_.size()) return {"EOF", Token::Type::EOF_};
 		std::string c;

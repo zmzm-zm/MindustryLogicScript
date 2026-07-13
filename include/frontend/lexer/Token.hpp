@@ -10,6 +10,7 @@ struct Token {
         STRING,
         OPERATOR,
         END,
+        COMMENT,
         EOF_
     };
     std::string value_ = "^v^";

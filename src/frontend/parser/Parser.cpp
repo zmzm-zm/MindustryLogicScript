@@ -40,6 +40,8 @@ void Parser::process() {
 		case Token::Type::IDENT:
 			if (currentToken.value_.find("(") == std::string::npos) variableAssignment();
 			break;
+		case Token::Type::COMMENT:
+			break;
 		default:
 			throw std::runtime_error("Unexpected token type");
 		}
