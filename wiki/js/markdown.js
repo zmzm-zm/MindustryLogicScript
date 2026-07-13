@@ -8,7 +8,6 @@ const Markdown = (() => {
   function registerMlsLanguages() {
     if (typeof hljs === 'undefined') return;
     if (hljs.getLanguage('mls')) return;
-
     try {
       hljs.registerLanguage('mls', function(hljs) {
         return {
@@ -22,8 +21,14 @@ const Markdown = (() => {
           contains: [
             {
               className: 'comment',
+              begin: '~~',
+              end: '~~',
+              contains: [hljs.PHRASAL_WORDS_MODE]
+            },
+            {
+              className: 'comment',
               begin: '~',
-              end: '$',
+              end: '\n|~',
               contains: [hljs.PHRASAL_WORDS_MODE]
             },
             hljs.QUOTE_STRING_MODE,
@@ -91,7 +96,7 @@ const Markdown = (() => {
 
   function configure() {
     registerMlsLanguages();
-    registerMlLanguages
+    registerMlLanguages();
 
     const renderer = new marked.Renderer();
 
