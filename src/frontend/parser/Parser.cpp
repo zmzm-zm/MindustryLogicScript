@@ -14,6 +14,7 @@
 #include <backend/logger/Logger.hpp>
 #include <common/LineCounter.hpp>
 #include <frontend/ast/nodes/AstNode.hpp>
+#include <frontend/ast/nodes/MindustryLogicNode.hpp>
 #include <frontend/ast/nodes/controlFlow/IfNode.hpp>
 #include <frontend/ast/nodes/controlFlow/WhileNode.hpp>
 
@@ -34,6 +35,7 @@ void Parser::process() {
 			if (currentToken.value_ == "var") variableDeclaration();
 			if (currentToken.value_ == "if") If();
 			if (currentToken.value_ == "while") While();
+			if (currentToken.value_ == ":") mindustryLogic();
 			break;
 		case Token::Type::IDENT:
 			if (currentToken.value_.find("(") == std::string::npos) variableAssignment();
@@ -250,6 +252,20 @@ std::unique_ptr<StatementNode> Parser::parseDeclaration() const {
 	LineCounter::increment();
 	return std::make_unique<DeclarationNode>(var);
 }
+std::unique_ptr<StatementNode> Parser::parseMindustryLogic() const {
+	tokenizer_->pass(); // :
+	std::string result;
+	auto token = tokenizer_->nextToken();
+	while (token.value_ != ";"
+			&& token.type_ != Token::Type::EOF_) {
+		result += token.value_ + " ";
+		token = tokenizer_->nextToken();
+	}
+	result += "\n";
+	LineCounter::increment();
+	auto node = std::make_unique<MindustryLogicNode>(std::move(result));
+	return std::move(node);
+}
 std::unique_ptr<ControlFlow> Parser::parseIf() {
 	tokenizer_->pass(); // if
 	tokenizer_->pass(); // (
@@ -321,6 +337,14 @@ void Parser::variableAssignment() {
 		new AstNode(std::move(node))
 	);
 }
+
+void Parser::mindustryLogic() {
+	auto mindustryLogicNode = parseMindustryLogic();
+	rootNodes_.top()->children_.emplace_back(
+		new AstNode(std::move(mindustryLogicNode))
+	);
+}
+
 void Parser::If() {
 	auto ifNode = parseIf();
 	rootNodes_.top()->children_.emplace_back(

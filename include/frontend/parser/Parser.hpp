@@ -29,11 +29,13 @@ public:
 	    std::size_t index = 0) const;
 	std::unique_ptr<ConditionNode> parseCondition() const;
 	std::unique_ptr<StatementNode> parseDeclaration() const;
+	std::unique_ptr<StatementNode> parseMindustryLogic() const;
 	std::unique_ptr<ControlFlow> parseIf();
 	std::unique_ptr<ControlFlow> parseWhile();
 private:
 	void variableDeclaration();
 	void variableAssignment();
+	void mindustryLogic();
 	void If();
 	void While();
 	Tokenizer* tokenizer_ = nullptr;
