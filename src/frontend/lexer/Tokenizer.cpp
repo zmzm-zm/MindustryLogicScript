@@ -63,6 +63,17 @@ Token Tokenizer::readToken(const Strategy strategy, const uint8_t offset) {
 		while (*pos < contents_.size()) {
 			if (isspace(contents_[*pos])) {
 				(*pos)++;
+			} else if (*pos + 1 < contents_.size()
+						&& contents_[*pos] == '~'
+						&& contents_[*pos + 1] == '~') {
+				(*pos) += 2;
+				while (*pos + 1 < contents_.size()
+					&& !(contents_[*pos] == '~' && contents_[*pos + 1] == '~')) {
+					(*pos)++;
+				}
+				if (*pos + 1 < contents_.size()) {
+					(*pos) += 2; // 跳过结束 ~~
+				}
 			} else if (contents_[*pos] == '~') {
 				(*pos)++;
 				while (*pos < contents_.size()

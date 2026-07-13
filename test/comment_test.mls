@@ -13,6 +13,9 @@ while (c < ~ test 9 ~ 20) {
     c = c + 1;
 }
 var d = 4;
+~~ test
+test
+test ~~
 var e = 7;
 var f = 2;
 var g;
@@ -22,7 +25,10 @@ while (~ test 12 ~ d < 10 && ~ test 10 ~ e <= 20 && f > 1) {
     while (d < 50 || f < 10) {
         d = f + 3;
         f = f ~ test 11 ~ + 1;
-        if (f > e) { ~ test 9
+        if (f > ~~ ttttttteeeee
+        ssssssssss
+        tttttttt
+        ~~ e) { ~ test 9
             ~ test 7
             g = 10;
         }
