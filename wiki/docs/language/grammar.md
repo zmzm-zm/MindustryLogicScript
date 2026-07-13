@@ -1,5 +1,13 @@
 # 语法
 ## 关键字
+### :
+`:`关键字允许你使用原生逻辑  
+`:`后的内容会被原封不动的加入结果  
+每个`:`只能跟一个句子  
+~~~mls
+: op rand a 20;
+: print "test";
+~~~
 ### var
 你可以使用var来声明一个变量  
 并附上初始化值或不  
@@ -12,21 +20,32 @@ var c = 4 + 1 / 2;
 var a = 3; ~ Error: " a " has been declared  
 ~ 想改变它的值，再次赋值即可  
 a = 63;
-~ 不进行初始化赋值时，自动初始化为-1027，请警惕这个值
+~ 不进行初始化赋值时，自动初始化为null，请警惕这个值
 ~~~
 ### if
 使用if来进行条件判断  
 条件为**真-true**则执行当前if的代码块  
 条件为**假-false**则不执行，或继续判断其他分支  
-if分为三种  
 - `if ($CONDITION) { $CODEBLOCK }`  
-  这种会在检查条件`$CONDITION`后选择是否执行`$CODEBLOCK`  
-- `elseif ($CONDITION) { $CODEBLOCK }`  
-  这种必须接在**if**后边，作为另一个分支，**不可单数使用**，逻辑与上述一致  
-- `else {$CODEBLOCK}`  
-  这种必须接在**if**或**elseif**后边  
-  但是没有条件，意为上方判断全不满足时，执行此代码块`$$CODEBLOCK`  
-  不是必要分支  
+  这种会在检查条件`$CONDITION`后选择是否执行`$CODEBLOCK`   
 ~~~mls
-
+var a = 10;
+var b = 0;
+if (a > 10) {
+  b = 3;
+}
+if (a <= 10) {
+  b = 8;
+}
+~~~
+### while
+while是**条件循环**  
+条件为**真-true**则执行当前while的代码块  
+条件为**假-false**则不执行  
+- `while ($CONDITION) { $CODEBLOCK }`  
+~~~mls
+var a = 0;
+while (a < 10) {
+  a = a + 1;
+} ~ 这个循环会在a等于10时退出
 ~~~

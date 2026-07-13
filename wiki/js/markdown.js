@@ -15,7 +15,7 @@ const Markdown = (() => {
           name: 'mls',
           case_insensitive: true,
           keywords: {
-            keyword: 'func if elseif else while return var const class new import from',
+            keyword: 'func if elseif else while return var const class new import from :',
             built_in: 'print input len type str int bool float list dict',
             literal: 'true false null undefined'
           },

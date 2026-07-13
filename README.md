@@ -1,6 +1,6 @@
 # Mindustry Logic Script  
 **See an English version at [this](./README_EN.md)**  
-**README最后修改日期26.6.19**  
+**README最后修改日期26.7.13**  
 本仓库提供了一个编译器  
 用于将mls脚本语言转化为**Mindustry Logic**，即像素工厂逻辑  
 集体信息见[Wiki](#Wiki)  
@@ -14,7 +14,7 @@
 所以它并不能被编译器编译为汇编代码  
 但他有一些基础的逻辑，控制语句等等  
 并且提供各种语法糖和功能模板，给常见逻辑和功能封装了函数  
-- **mls是一个无类型的语言**  
+- **mls是一个弱类型的语言**  
 因为具体类型检查等都由游戏运行时决定  
 而且Mindustry Logic本身就弱类型  
 所以即使你写`"Hello World" / 3`也不会编译错误  
@@ -47,7 +47,7 @@
 具体信息见[本仓库Wiki](https://zmzm-zm.github.io/MindustryLogicScript)  
 如果[打不开Wiki网页](#本地浏览Wiki)
 ### 本地浏览Wiki
-如果你不会魔法打不开Wiki网页  
+如果你打不开Wiki网页  
 可以本地浏览，具体操作如下  
 > 需要使用Linux命令行
 
@@ -60,9 +60,9 @@
 	git clone https://github.com/zmzm-zm/MindustryLogicScript
 	```
 2. 进入wiki文件夹  
-```console
-cd MindustryLogicScript/wiki
-```
+	```console
+	cd MindustryLogicScript/wiki
+	```
 3. 创建本地服务器  
 	- 使用python3  
 	```console
@@ -87,6 +87,8 @@ cd MindustryLogicScript/wiki
 	- 使用nodejs  
 	在浏览器网址输入`http://127.0.0.1:8080/index.html`
 ### 使用
+如果你要拿走这个Wiki  
+这里是使用方法  
 建议使用node.js  
 在Wiki根目录下运行服务器  
 提前下载nodejs和http-server
