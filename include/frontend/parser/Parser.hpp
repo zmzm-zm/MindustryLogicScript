@@ -4,6 +4,7 @@
 #include <stack>
 #include <string>
 #include <frontend/ast/nodes/AstNode.hpp>
+#include <spdlog/logger.h>
 class AstNode;
 class ControlFlow;
 class Tokenizer;
@@ -40,4 +41,5 @@ private:
 	void While();
 	Tokenizer* tokenizer_ = nullptr;
 	std::stack<std::unique_ptr<AstNode>> rootNodes_;
+	spdlog::logger* debug_ = nullptr;
 };

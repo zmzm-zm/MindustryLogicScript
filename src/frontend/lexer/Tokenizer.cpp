@@ -113,19 +113,19 @@ Token Tokenizer::readToken(const Strategy strategy, const uint8_t offset) {
 
 Token Tokenizer::next(std::string name, int line) {
 	auto token = readToken(Strategy::CONSUMPTIVE);
-	if (token.value_ != "EOF") Logger::instance()->debug(name + "-" + std::to_string(line) + "-next: " + token.value_);
+	if (token.value_ != "EOF")
+		Logger::debug("{}-{}-next: {}", name, std::to_string(line), token.value_);
 	return token;
-
 }
 void Tokenizer::pass() {
 	const auto token = readToken(Strategy::CONSUMPTIVE);
-	Logger::instance()->debug(std::to_string(pos_) + "-pass: " + token.value_);
+	Logger::debug("{}-pass: {}", std::to_string(pos_), token.value_);
 
 }
 
 Token Tokenizer::peek(const uint8_t offset) {
 	auto token = readToken(Strategy::NON_CONSUMPTIVE, offset);
-	Logger::instance()->debug(std::to_string(pos_) + "-peek: " + token.value_);
+	Logger::debug("{}-peek: {}", std::to_string(pos_), token.value_);
     return token;
 
 }

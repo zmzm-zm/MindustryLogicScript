@@ -14,6 +14,7 @@ void Logger::initialize() {
         2048 * 1024,
         2).get();
     logger_->set_level(spdlog::level::debug);
+    logger_->set_pattern("[%Y-%m-%d %H:%M:%S][%^%l%$] %v");
 }
 Logger& Logger::instance() {
     static Logger instance;
@@ -21,8 +22,4 @@ Logger& Logger::instance() {
 }
 spdlog::logger* Logger::operator->() const {
     return logger_;
-}
-void Logger::error(const std::string& msg) {
-	instance()->error(msg);
-	throw std::runtime_error(msg);
 }

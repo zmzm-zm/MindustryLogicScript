@@ -20,13 +20,13 @@ std::string ConditionNode::getOpStr(const std::string_view str) {
     if (str == "===")return "notEqual";
     if (str == "!=") return "equal";
     if (str == "true") return "always";
-    Logger::error("Unknown operator: " + std::string(str));
+    Logger::error("Unknown operator: {}", std::string(str));
     return "Unknown operator: " + std::string(str);
 }
 ConditionNode::LogicOperator ConditionNode::getLogicOp(std::string_view str) {
     if (str == "&&") return LogicOperator::AND;
     if (str == "||") return LogicOperator::OR;
-    Logger::error("Unknown operator: " + std::string(str));
+    Logger::error("Unknown operator: {}", std::string(str));
     return LogicOperator::UNKNOWN;
 }
 std::vector<ConditionNode::Unit> ConditionNode::flatten(ExpressionNode* node) {
