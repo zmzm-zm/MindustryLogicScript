@@ -5,23 +5,31 @@ on:
       - 'v*'
 jobs:
   build-windows:
-    name: Build Windows
     runs-on: windows-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Build project
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          install: |
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-make
+      - name: Build with GCC
+        shell: msys2 {0}
         run: |
-          mkdir build
-          cd build
-          cmake ..
-          cmake --build . --config Release
+          mkdir build && cd build
+          cmake .. -G "MinGW Makefiles"
+          make -j$(nproc)
+
       - name: Upload binary to Release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./build/Release/mls.exe
+          asset_path: ./build/mls.exe
           asset_name: mls-windows-x86_64.exe
           asset_content_type: application/vnd.microsoft.portable-executable
