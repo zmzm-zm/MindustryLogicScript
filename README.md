@@ -26,14 +26,20 @@
 - 在本仓库的[release页面](https://github.com/zmzm-zm/MindustryLogicScript/releases)下载编译器  
 	> 如果没有，那就是连初版都还没做出来  
 
-- 设置环境变量，使命令可以被找到  
-- 输入编译命令，例如  
-	```console
-	mls output input1.mls input2.mls 
-	```
-	第一个参数为输出文件的名字  
-	第二个即以后的为输入文件  
-	**目前仅支持单文件**，不会对第二个以后的文件进行处理  
+- 设置环境变量，使命令可以被找到
+	> 也可以不设置，在mls目录下使用即可
+- 输入编译命令  
+    - Windows:
+        ```console
+        .\mls.exe output input1.mls input2.mls
+        ```
+    - Linux:
+        ```console
+        mls output input1.mls input2.mls 
+        ```
+    第一个参数为输出文件的名字  
+    第二个即以后的为输入文件  
+    **目前仅支持单文件**，不会对第二个以后的文件进行处理  
 - 输出的`output.ml`即为结果  
 	复制粘贴到游戏即可使用
 	> 到目前输出仍为原生Mindustry Logic  
