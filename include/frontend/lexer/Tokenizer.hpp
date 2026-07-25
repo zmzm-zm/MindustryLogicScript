@@ -16,10 +16,10 @@ enum class OperatorType {
 class Tokenizer {
 	enum class Strategy;
 public:
-	#define nextToken() next(__FILE_NAME__, __LINE__)
 	static OperatorType analyzeOperator(std::string_view operator_) noexcept;
 	void setCurrentFile(std::string file) noexcept;
 	void initializeFile();
+	void reset() noexcept;
 	static bool isOperator(std::string_view c) noexcept;
 	static Token::Type getToken(std::string_view value);
 	/**
@@ -40,7 +40,7 @@ public:
 	 * @return 一个常量Token
 	 * @note 此函数会递增当前在文件的位置
 	 */
-	Token next(std::string name, int line);
+	Token nextToken();
 	/**
 	 * @brief 跳过下一个Token
 	 * @note 此函数会递增当前在文件的位置

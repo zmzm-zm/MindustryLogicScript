@@ -39,7 +39,11 @@ private:
 	void mindustryLogic();
 	void If();
 	void While();
+	void isVariableDeclared(std::string_view name) const;
+	void isVariableUndeclared(std::string_view name) const;
+	void addVariable(std::string_view name);
 	Tokenizer* tokenizer_ = nullptr;
 	std::stack<std::unique_ptr<AstNode>> rootNodes_;
 	spdlog::logger* debug_ = nullptr;
+	std::vector<std::string> variables_;
 };

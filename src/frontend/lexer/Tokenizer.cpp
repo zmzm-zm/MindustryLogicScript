@@ -6,10 +6,7 @@
 #include <frontend/lexer/Tokenizer.hpp>
 #include <backend/logger/Logger.hpp>
 #include <utility>
-
-
 Token::Token(std::string value, Token::Type type): value_(std::move(value)), type_(type) {}
-
 OperatorType Tokenizer::analyzeOperator(std::string_view operator_) noexcept {
 	if (operator_ == "*") return OperatorType::Multiplication;
 	if (operator_ == "/") return OperatorType::Division;
@@ -18,6 +15,7 @@ OperatorType Tokenizer::analyzeOperator(std::string_view operator_) noexcept {
 	return OperatorType::Undefined;
 }
 void Tokenizer::setCurrentFile(std::string file) noexcept {
+	reset();
 	currentFileName_ = std::move(file);
 }
 void Tokenizer::initializeFile() {
@@ -25,8 +23,14 @@ void Tokenizer::initializeFile() {
 	if (!currentFile_.is_open()) {
 		throw std::runtime_error("Can not open file \"" + currentFileName_ + "\"");
 	}
-	contents_ = std::string((std::istreambuf_iterator<char>(currentFile_)),
-	std::istreambuf_iterator<char>());
+	contents_ = std::string(
+		(std::istreambuf_iterator<char>(currentFile_)),
+		std::istreambuf_iterator<char>());
+}
+void Tokenizer::reset() noexcept {
+	currentFileName_ = "^v^";
+	contents_ = "^v^";
+	pos_ = 0;
 }
 bool Tokenizer::isOperator(std::string_view c) noexcept {
 	return c == "+" || c == "-" || c == "*" || c == "/" || c == "//" || c == "="
@@ -42,6 +46,8 @@ Token::Type Tokenizer::getToken(const std::string_view value) {
 		value == "else" ||
 		value == ":" ||
 		value == "for") return Token::Type::KEYWORD;
+	if (value == "true" ||
+		value == "false") return Token::Type::BOOLEAN;
 	if (isdigit(value[0])) return Token::Type::NUMBER;
 	if (value[0] == '"') return Token::Type::STRING;
 	if (isOperator(value)) return Token::Type::OPERATOR;
@@ -110,22 +116,20 @@ Token Tokenizer::readToken(const Strategy strategy, const uint8_t offset) {
 	}
 	return {value, type};
 }
-
-Token Tokenizer::next(std::string name, int line) {
+Token Tokenizer::nextToken() {
 	auto token = readToken(Strategy::CONSUMPTIVE);
 	if (token.value_ != "EOF")
-		Logger::debug("{}-{}-next: {}", name, std::to_string(line), token.value_);
+		Logger::debug("nextToken: {}", token.value_);
 	return token;
 }
 void Tokenizer::pass() {
 	const auto token = readToken(Strategy::CONSUMPTIVE);
-	Logger::debug("{}-pass: {}", std::to_string(pos_), token.value_);
+	Logger::debug("pass: {}", token.value_);
 
 }
-
 Token Tokenizer::peek(const uint8_t offset) {
 	auto token = readToken(Strategy::NON_CONSUMPTIVE, offset);
-	Logger::debug("{}-peek: {}", std::to_string(pos_), token.value_);
+	Logger::debug("peek: {}", token.value_);
     return token;
 
 }

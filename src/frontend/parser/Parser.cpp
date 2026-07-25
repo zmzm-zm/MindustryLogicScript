@@ -54,6 +54,7 @@ void Parser::setTokenizer(Tokenizer& tokenizer) {
 std::unique_ptr<StatementNode> Parser::parseInitialization() const {
     tokenizer_->pass();
     auto variable = tokenizer_->nextToken().value_;
+	isVariableDeclared(variable);
     tokenizer_->pass();
 	auto linesBefor = LineCounter::getLineCount();
     auto exprNode = parseOperation(variable);
@@ -64,6 +65,7 @@ std::unique_ptr<StatementNode> Parser::parseInitialization() const {
 }
 std::unique_ptr<StatementNode> Parser::parseAssignment() const {
 	auto variable = tokenizer_->nextToken().value_;
+	isVariableUndeclared(variable);
 	tokenizer_->pass();
 	auto exprNode = parseOperation(variable);
 	return std::make_unique<AssignmentNode>(variable, std::move(exprNode));
@@ -82,6 +84,7 @@ std::unique_ptr<OperationNode> Parser::parseOperation(
     while (true) {
         Token tok = tokenizer_->peek();
         if (tok.type_ == Token::Type::NUMBER || tok.type_ == Token::Type::IDENT) {
+        	if (tok.type_ == Token::Type::IDENT) isVariableDeclared(tok.value_);
             tokenizer_->pass();
             output.push_back(std::make_unique<OperationNode>(
                 makeNodeName(), nullptr, tok.value_, nullptr
@@ -161,6 +164,7 @@ std::unique_ptr<ConditionNode> Parser::parseCondition() const {
             }
         } else if (nextToken.type_ == Token::Type::IDENT ||
                    nextToken.type_ == Token::Type::NUMBER) {
+        	if (nextToken.type_ == Token::Type::IDENT) isVariableDeclared(nextToken.value_);
             idents.push_back(nextToken.value_);
         }
         nextToken = tokenizer_->nextToken();
@@ -250,6 +254,7 @@ std::unique_ptr<ConditionNode> Parser::parseCondition() const {
 std::unique_ptr<StatementNode> Parser::parseDeclaration() const {
 	tokenizer_->pass();
 	auto var = tokenizer_->nextToken().value_;
+	isVariableDeclared(var);
 	tokenizer_->pass();
 	LineCounter::increment();
 	return std::make_unique<DeclarationNode>(var);
@@ -308,17 +313,11 @@ std::unique_ptr<ControlFlow> Parser::parseWhile() {
 void Parser::variableDeclaration() {
 	auto var = tokenizer_->peek(2).value_;
 	auto c = tokenizer_->peek(3).value_;
-	/* 等待语法检查器统一检查
 	if (c != "=" && c != ";") Logger::error("expect \"=\" or \";\"");
-	 auto it = std::ranges::find(variables_, var);
-	if (it != variables_.end()) {
-		Logger::error("\" " + var + "\" has been declared");
-	}
-	 variables_.emplace_back(var);
-	*/
 	std::unique_ptr<StatementNode> node;
 	if(c == ";") node = parseDeclaration();
 	else node = parseInitialization();
+	addVariable(var);
 	rootNodes_.top()->children_.emplace_back(
 		new AstNode(std::move(node))
 	);
@@ -326,27 +325,18 @@ void Parser::variableDeclaration() {
 void Parser::variableAssignment() {
 	auto var = tokenizer_->peek().value_;
 	auto c = tokenizer_->peek(2).value_;
-	// 等待语法检查器统一检查
-	/*
 	if (c != "=") Logger::error("expect \"=\"");
-	auto it = std::ranges::find(variables_, var);
-	if (it == variables_.end()) {
-		Logger::error("\" " + var + "\" has not been declared");
-	}
-	*/
 	auto node = parseAssignment();
 	rootNodes_.top()->children_.emplace_back(
 		new AstNode(std::move(node))
 	);
 }
-
 void Parser::mindustryLogic() {
 	auto mindustryLogicNode = parseMindustryLogic();
 	rootNodes_.top()->children_.emplace_back(
 		new AstNode(std::move(mindustryLogicNode))
 	);
 }
-
 void Parser::If() {
 	auto ifNode = parseIf();
 	rootNodes_.top()->children_.emplace_back(
@@ -358,4 +348,19 @@ void Parser::While() {
 	rootNodes_.top()->children_.emplace_back(
 		new AstNode(std::move(whileNode))
 	);
+}
+void Parser::isVariableDeclared(std::string_view name) const {
+	auto it = std::ranges::find(variables_, name);
+	if (it != variables_.end()) {
+		Logger::error("'{}' has been declared", name);
+	}
+}
+void Parser::isVariableUndeclared(std::string_view name) const {
+	auto it = std::ranges::find(variables_, name);
+	if (it == variables_.end()) {
+		Logger::error("'{}' has not been declared", name);
+	}
+}
+void Parser::addVariable(std::string_view name) {
+	variables_.emplace_back(name);
 }

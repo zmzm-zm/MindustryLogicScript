@@ -8,7 +8,9 @@ struct Token {
         IDENT,
         NUMBER,
         STRING,
+        BOOLEAN,
         OPERATOR,
+        NONE,
         END,
         COMMENT,
         EOF_
