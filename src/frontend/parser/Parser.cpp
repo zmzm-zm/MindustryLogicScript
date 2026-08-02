@@ -14,9 +14,10 @@
 #include <backend/logger/Logger.hpp>
 #include <common/LineCounter.hpp>
 #include <frontend/ast/nodes/AstNode.hpp>
-#include <frontend/ast/nodes/MindustryLogicNode.hpp>
+#include <frontend/ast/nodes/mindustry/MindustryLogicNode.hpp>
 #include <frontend/ast/nodes/controlFlow/IfNode.hpp>
 #include <frontend/ast/nodes/controlFlow/WhileNode.hpp>
+#include <frontend/ast/nodes/mindustry/TrigOpNode.hpp>
 
 Parser::Parser() {}
 Parser::~Parser() {}
@@ -56,11 +57,7 @@ std::unique_ptr<StatementNode> Parser::parseInitialization() const {
     auto variable = tokenizer_->nextToken().value_;
 	isVariableDeclared(variable);
     tokenizer_->pass();
-	auto linesBefor = LineCounter::getLineCount();
     auto exprNode = parseOperation(variable);
-	if (LineCounter::getLineCount() - linesBefor != 1) {
-		LineCounter::increment();
-	}
     return std::make_unique<InitializationNode>(variable, std::move(exprNode));
 }
 std::unique_ptr<StatementNode> Parser::parseAssignment() const {
@@ -84,10 +81,36 @@ std::unique_ptr<OperationNode> Parser::parseOperation(
     while (true) {
         Token tok = tokenizer_->peek();
         if (tok.type_ == Token::Type::NUMBER || tok.type_ == Token::Type::IDENT) {
-        	if (tok.type_ == Token::Type::IDENT) isVariableDeclared(tok.value_);
-            tokenizer_->pass();
+        	auto value = tok.value_;
+        	if (tok.type_ == Token::Type::IDENT) {
+        		if (value.substr(0,3) == "_m_") {
+        			tokenizer_->pass();
+        			tokenizer_->pass();
+        			std::string param = tokenizer_->nextToken().value_;
+        			tokenizer_->pass();
+        			auto resultName = makeNodeName();
+        			auto funcName = value.substr(3,6);
+        			TrigOpNode::Type type = TrigOpNode::Type::UNDEFINED;
+        			if (funcName == "tan") type = TrigOpNode::Type::TAN;
+        			else if (funcName == "sin") type = TrigOpNode::Type::SIN;
+        			else if (funcName == "cos") type = TrigOpNode::Type::COS;
+        			else if (funcName == "atan") type = TrigOpNode::Type::ATAN;
+        			else if (funcName == "asin") type = TrigOpNode::Type::ASIN;
+        			else if (funcName == "acos") type = TrigOpNode::Type::ACOS;
+        			else throw std::runtime_error("Unknown Function: " + funcName);
+        			rootNodes_.top()->children_.emplace_back(
+						new AstNode(std::make_unique<TrigOpNode>(resultName, type, param))
+        			);
+        			value = resultName;
+        		}
+        		else {
+        			isVariableUndeclared(tok.value_);
+        			tokenizer_->pass();
+        		}
+        	}
+            else tokenizer_->pass();
             output.push_back(std::make_unique<OperationNode>(
-                makeNodeName(), nullptr, tok.value_, nullptr
+                makeNodeName(), nullptr, value, nullptr
             ));
         }
         else if (tok.type_ == Token::Type::OPERATOR) {
@@ -164,7 +187,7 @@ std::unique_ptr<ConditionNode> Parser::parseCondition() const {
             }
         } else if (nextToken.type_ == Token::Type::IDENT ||
                    nextToken.type_ == Token::Type::NUMBER) {
-        	if (nextToken.type_ == Token::Type::IDENT) isVariableDeclared(nextToken.value_);
+        	if (nextToken.type_ == Token::Type::IDENT) isVariableUndeclared(nextToken.value_);
             idents.push_back(nextToken.value_);
         }
         nextToken = tokenizer_->nextToken();

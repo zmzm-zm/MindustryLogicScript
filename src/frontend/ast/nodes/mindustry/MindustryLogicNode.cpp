@@ -1,4 +1,4 @@
-#include <frontend/ast/nodes/MindustryLogicNode.hpp>
+#include <frontend/ast/nodes/mindustry/MindustryLogicNode.hpp>
 MindustryLogicNode::MindustryLogicNode(std::string_view logic)
 : logic_(logic) {}
 

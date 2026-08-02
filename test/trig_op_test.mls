@@ -1,0 +1,37 @@
+var a = 0;
+var b = 0;
+var c = 0;
+while (a < 10) {
+    while (b < 10) {
+        b = b + 2;
+    }
+    a = a + 1;
+}
+while (c < 20) {
+    c = c + 1;
+}
+var d = 4;
+var e = 7;
+var f = 2;
+var trig1 = _m_sin(30);
+var trig2 = 45 + _m_tan(45);
+var trig3 = _m_tan(45) + _m_cos(30);
+var trig4 = 4 * 6 + _m_tan(45) / 20 - 1;
+var num1 = _m_atan(1);
+var num2 = _m_asin(0.5);
+var num3 = _m_acos(0.5) + _m_atan(1);
+var g;
+var h;
+while (d < 10 && e <= 20 && f > 1) {
+    e = e + 1;
+    while (d < 50 || f < 10) {
+        d = f + 3;
+        f = f + 1;
+        if (f > e) {
+            g = 10;
+        }
+    }
+    if (e > d) {
+        h = 99;
+    }
+}
