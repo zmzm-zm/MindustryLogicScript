@@ -9,5 +9,5 @@ std::string InitializationNode::toString() {
     if (exprCode.empty()) {
         return "set " + variable_ + " " + value_->getValue() + "\n";
     }
-    return "set " + variable_ + " 0\n" + exprCode + "set " + variable_ + " " + value_->getName() + "\n";
+    return exprCode + "set " + variable_ + " " + value_->getName() + "\n";
 }

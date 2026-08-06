@@ -58,6 +58,10 @@ std::unique_ptr<StatementNode> Parser::parseInitialization() const {
 	isVariableDeclared(variable);
     tokenizer_->pass();
     auto exprNode = parseOperation(variable);
+	auto exprNodeStr = exprNode->toString();
+	int operationLine = std::ranges::count(exprNodeStr, '\n');
+	for (int i = 0; i < operationLine; ++i) LineCounter::increment();
+	LineCounter::increment();
     return std::make_unique<InitializationNode>(variable, std::move(exprNode));
 }
 std::unique_ptr<StatementNode> Parser::parseAssignment() const {
@@ -65,6 +69,10 @@ std::unique_ptr<StatementNode> Parser::parseAssignment() const {
 	isVariableUndeclared(variable);
 	tokenizer_->pass();
 	auto exprNode = parseOperation(variable);
+	auto exprNodeStr = exprNode->toString();
+	int operationLine = std::ranges::count(exprNodeStr, '\n');
+	for (uint8_t i = 0; i < operationLine; ++i) LineCounter::increment();
+	LineCounter::increment();
 	return std::make_unique<AssignmentNode>(variable, std::move(exprNode));
 }
 std::unique_ptr<OperationNode> Parser::parseOperation(
@@ -74,34 +82,21 @@ std::unique_ptr<OperationNode> Parser::parseOperation(
     std::vector<Token> operators;
     std::string currentName = name;
     std::size_t currentIndex = index;
+	int funcCallingNum = 0;
     auto makeNodeName = [&]() -> std::string {
-    	LineCounter::increment();
+    	// LineCounter::increment();
         return currentName + std::to_string(currentIndex++) + "_";
     };
     while (true) {
         Token tok = tokenizer_->peek();
         if (tok.type_ == Token::Type::NUMBER || tok.type_ == Token::Type::IDENT) {
+        	std::string nodeName = makeNodeName();
         	auto value = tok.value_;
         	if (tok.type_ == Token::Type::IDENT) {
         		if (value.substr(0,3) == "_m_") {
-        			tokenizer_->pass();
-        			tokenizer_->pass();
-        			std::string param = tokenizer_->nextToken().value_;
-        			tokenizer_->pass();
-        			auto resultName = makeNodeName();
-        			auto funcName = value.substr(3,6);
-        			TrigOpNode::Type type = TrigOpNode::Type::UNDEFINED;
-        			if (funcName == "tan") type = TrigOpNode::Type::TAN;
-        			else if (funcName == "sin") type = TrigOpNode::Type::SIN;
-        			else if (funcName == "cos") type = TrigOpNode::Type::COS;
-        			else if (funcName == "atan") type = TrigOpNode::Type::ATAN;
-        			else if (funcName == "asin") type = TrigOpNode::Type::ASIN;
-        			else if (funcName == "acos") type = TrigOpNode::Type::ACOS;
-        			else throw std::runtime_error("Unknown Function: " + funcName);
-        			rootNodes_.top()->children_.emplace_back(
-						new AstNode(std::make_unique<TrigOpNode>(resultName, type, param))
-        			);
-        			value = resultName;
+        			value = trig(makeNodeName(), value);
+        			nodeName = value;
+        			++funcCallingNum;
         		}
         		else {
         			isVariableUndeclared(tok.value_);
@@ -110,7 +105,7 @@ std::unique_ptr<OperationNode> Parser::parseOperation(
         	}
             else tokenizer_->pass();
             output.push_back(std::make_unique<OperationNode>(
-                makeNodeName(), nullptr, value, nullptr
+                nodeName, nullptr, value, nullptr
             ));
         }
         else if (tok.type_ == Token::Type::OPERATOR) {
@@ -151,6 +146,7 @@ std::unique_ptr<OperationNode> Parser::parseOperation(
             tokenizer_->pass();
         }
     }
+	//for (int i = 0; i < operators.size() + funcCallingNum + 1; ++i) LineCounter::increment();
     while (!operators.empty()) {
         Token op = operators.back();
         if (output.size() < 2) {
@@ -164,7 +160,7 @@ std::unique_ptr<OperationNode> Parser::parseOperation(
         output.push_back(std::make_unique<OperationNode>(
             makeNodeName(), std::move(left), op.value_, std::move(right)
         ));
-    	LineCounter::decrement();
+    	// LineCounter::decrement();
     }
     if (output.size() != 1) {
         throw std::runtime_error("Invalid Operation: final stack size is " +
@@ -386,4 +382,24 @@ void Parser::isVariableUndeclared(std::string_view name) const {
 }
 void Parser::addVariable(std::string_view name) {
 	variables_.emplace_back(name);
+}
+std::string Parser::trig(std::string resultName, std::string value) const {
+	tokenizer_->pass();
+	tokenizer_->pass();
+	std::string param = tokenizer_->nextToken().value_;
+	tokenizer_->pass();
+	auto funcName = value.substr(3,6);
+	TrigOpNode::Type type = TrigOpNode::Type::UNDEFINED;
+	if (funcName == "tan") type = TrigOpNode::Type::TAN;
+	else if (funcName == "sin") type = TrigOpNode::Type::SIN;
+	else if (funcName == "cos") type = TrigOpNode::Type::COS;
+	else if (funcName == "atan") type = TrigOpNode::Type::ATAN;
+	else if (funcName == "asin") type = TrigOpNode::Type::ASIN;
+	else if (funcName == "acos") type = TrigOpNode::Type::ACOS;
+	else throw std::runtime_error("Unknown Function: " + funcName);
+	LineCounter::increment();
+	rootNodes_.top()->children_.emplace_back(
+		new AstNode(std::make_unique<TrigOpNode>(resultName, type, param))
+	);
+	return resultName;
 }
