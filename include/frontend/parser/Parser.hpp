@@ -5,6 +5,7 @@
 #include <string>
 #include <frontend/ast/nodes/AstNode.hpp>
 #include <spdlog/logger.h>
+class VariableNode;
 class AstNode;
 class ControlFlow;
 class Tokenizer;
@@ -23,22 +24,24 @@ public:
 	std::unique_ptr<AstNode> getRoot();
 	void process();
     void setTokenizer(Tokenizer& tokenizer);
-    std::unique_ptr<StatementNode> parseInitialization() const;
-	std::unique_ptr<StatementNode> parseAssignment() const;
+    std::unique_ptr<VariableNode> parseInitialization();
+	std::unique_ptr<VariableNode> parseAssignment() const;
     std::unique_ptr<OperationNode> parseOperation(
     std::string name = "^v^",
 	    std::size_t index = 0) const;
-	std::unique_ptr<ConditionNode> parseCondition() const;
-	std::unique_ptr<StatementNode> parseDeclaration() const;
+	std::unique_ptr<ConditionNode> parseCondition(std::string ending = ")") const;
+	std::unique_ptr<VariableNode> parseDeclaration();
 	std::unique_ptr<StatementNode> parseMindustryLogic() const;
 	std::unique_ptr<ControlFlow> parseIf();
 	std::unique_ptr<ControlFlow> parseWhile();
+	std::unique_ptr<ControlFlow> parseFor();
 private:
 	void variableDeclaration();
 	void variableAssignment();
 	void mindustryLogic();
 	void If();
 	void While();
+	void For();
 	void isVariableDeclared(std::string_view name) const;
 	void isVariableUndeclared(std::string_view name) const;
 	void addVariable(std::string_view name);

@@ -18,7 +18,7 @@
  * jump $ENDLINE equal BOOLEAN0_ true :$WHILELINE
  * $BODY
  * jump $HEADLIINE always
- * print "END" :$ENDLINE = $WHILELINE + line($BODY) + 2
+ * print "END" :$ENDLINE = $WHILELINE + line($BODY) + 1
  *
  */
 class WhileNode final: public ControlFlow {

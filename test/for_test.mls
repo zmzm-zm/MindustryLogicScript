@@ -1,0 +1,16 @@
+var a = a + 1;
+var k;
+var sum;
+for (var i = 0; i < 5; i = i + 1) {
+    sum = sum + i;
+    k = 5;
+    : print "for body";
+}
+
+var j = 1;
+var num = 0;
+~ for 使用外部已声明的变量作init
+for (j = 1; j <= 3; j = j + 1) {
+    sum = sum + j;
+    a = 10;
+}

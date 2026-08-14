@@ -17,6 +17,7 @@
 #include <frontend/ast/nodes/mindustry/MindustryLogicNode.hpp>
 #include <frontend/ast/nodes/controlFlow/IfNode.hpp>
 #include <frontend/ast/nodes/controlFlow/WhileNode.hpp>
+#include <frontend/ast/nodes/controlFlow/ForNode.hpp>
 #include <frontend/ast/nodes/mindustry/TrigOpNode.hpp>
 
 Parser::Parser() {}
@@ -36,6 +37,7 @@ void Parser::process() {
 			if (currentToken.value_ == "var") variableDeclaration();
 			if (currentToken.value_ == "if") If();
 			if (currentToken.value_ == "while") While();
+			if (currentToken.value_ == "for") For();
 			if (currentToken.value_ == ":") mindustryLogic();
 			break;
 		case Token::Type::IDENT:
@@ -52,10 +54,11 @@ void Parser::process() {
 void Parser::setTokenizer(Tokenizer& tokenizer) {
     tokenizer_ = &tokenizer;
 }
-std::unique_ptr<StatementNode> Parser::parseInitialization() const {
+std::unique_ptr<VariableNode> Parser::parseInitialization() {
     tokenizer_->pass();
     auto variable = tokenizer_->nextToken().value_;
 	isVariableDeclared(variable);
+	addVariable(variable);
     tokenizer_->pass();
     auto exprNode = parseOperation(variable);
 	auto exprNodeStr = exprNode->toString();
@@ -64,7 +67,7 @@ std::unique_ptr<StatementNode> Parser::parseInitialization() const {
 	LineCounter::increment();
     return std::make_unique<InitializationNode>(variable, std::move(exprNode));
 }
-std::unique_ptr<StatementNode> Parser::parseAssignment() const {
+std::unique_ptr<VariableNode> Parser::parseAssignment() const {
 	auto variable = tokenizer_->nextToken().value_;
 	isVariableUndeclared(variable);
 	tokenizer_->pass();
@@ -78,6 +81,7 @@ std::unique_ptr<StatementNode> Parser::parseAssignment() const {
 std::unique_ptr<OperationNode> Parser::parseOperation(
     const std::string name,
     std::size_t index) const {
+	bool included = false;
     std::vector<std::unique_ptr<OperationNode>> output;
     std::vector<Token> operators;
     std::string currentName = name;
@@ -108,6 +112,10 @@ std::unique_ptr<OperationNode> Parser::parseOperation(
                 nodeName, nullptr, value, nullptr
             ));
         }
+        else if (!included
+				&& tok.value_ == ")") {
+        	break;
+			}
         else if (tok.type_ == Token::Type::OPERATOR) {
 		    if (tok.value_ == ";") {
 		    	tokenizer_->pass();
@@ -146,7 +154,6 @@ std::unique_ptr<OperationNode> Parser::parseOperation(
             tokenizer_->pass();
         }
     }
-	//for (int i = 0; i < operators.size() + funcCallingNum + 1; ++i) LineCounter::increment();
     while (!operators.empty()) {
         Token op = operators.back();
         if (output.size() < 2) {
@@ -160,7 +167,6 @@ std::unique_ptr<OperationNode> Parser::parseOperation(
         output.push_back(std::make_unique<OperationNode>(
             makeNodeName(), std::move(left), op.value_, std::move(right)
         ));
-    	// LineCounter::decrement();
     }
     if (output.size() != 1) {
         throw std::runtime_error("Invalid Operation: final stack size is " +
@@ -168,13 +174,13 @@ std::unique_ptr<OperationNode> Parser::parseOperation(
     }
     return std::move(output[0]);
 }
-std::unique_ptr<ConditionNode> Parser::parseCondition() const {
+std::unique_ptr<ConditionNode> Parser::parseCondition(std::string ending) const {
     // 收集 tokens
     std::vector<std::string> operators;
     std::vector<std::string> logics;
     std::vector<std::string> idents;
     auto nextToken = tokenizer_->nextToken();
-    while (nextToken.value_ != ")") {
+    while (nextToken.value_ != ending) {
         if (nextToken.type_ == Token::Type::OPERATOR) {
             if (nextToken.value_ == "&&" || nextToken.value_ == "||") {
                 logics.push_back(nextToken.value_);
@@ -270,10 +276,11 @@ std::unique_ptr<ConditionNode> Parser::parseCondition() const {
     comparisons.clear();
     return result;
 }
-std::unique_ptr<StatementNode> Parser::parseDeclaration() const {
+std::unique_ptr<VariableNode> Parser::parseDeclaration() {
 	tokenizer_->pass();
 	auto var = tokenizer_->nextToken().value_;
 	isVariableDeclared(var);
+	addVariable(var);
 	tokenizer_->pass();
 	LineCounter::increment();
 	return std::make_unique<DeclarationNode>(var);
@@ -329,6 +336,47 @@ std::unique_ptr<ControlFlow> Parser::parseWhile() {
 	rootNodes_.pop();
 	return std::move(node);
 }
+std::unique_ptr<ControlFlow> Parser::parseFor() {
+	tokenizer_->pass(); // for
+	tokenizer_->pass(); // (
+	std::unique_ptr<VariableNode> initialization;
+	auto tok = tokenizer_->peek();
+	if (tok.value_ == "var") {
+		auto var = tokenizer_->peek(2).value_;
+		auto c = tokenizer_->peek(3).value_;
+		if (c != "=" && c != ";") Logger::error("expect \"=\" or \";\"");
+		if(c == ";") initialization = std::move(parseDeclaration());
+		else initialization = std::move(parseInitialization());
+		addVariable(var);
+	} else initialization = std::move(parseAssignment());
+
+	auto condition = parseCondition(";");
+	std::string conditionStr = condition->toString();
+	int conditionLine = std::ranges::count(conditionStr, '\n');
+
+	std::unique_ptr<VariableNode> incr;
+	tok = tokenizer_->peek();
+	if (tok.value_ == "var") {
+		Logger::error("Do not expect \"var\" at increment");
+	} else incr = std::move(parseAssignment());
+	tokenizer_->pass(); // )
+
+	tokenizer_->pass(); // {
+	rootNodes_.push(std::make_unique<AstNode>());
+	LineCounter::increment();
+	auto currentLine = LineCounter::getLineCount();
+	process();
+	LineCounter::increment();
+	LineCounter::increment();
+	for (uint8_t i = 0; i < conditionLine; ++i) LineCounter::increment();
+	tokenizer_->pass(); // }
+
+	auto node = std::make_unique<ForNode>(std::move(initialization),
+		std::move(condition), std::move(incr),
+		std::move(rootNodes_.top()), currentLine);
+	rootNodes_.pop();
+	return std::move(node);
+}
 void Parser::variableDeclaration() {
 	auto var = tokenizer_->peek(2).value_;
 	auto c = tokenizer_->peek(3).value_;
@@ -336,7 +384,6 @@ void Parser::variableDeclaration() {
 	std::unique_ptr<StatementNode> node;
 	if(c == ";") node = parseDeclaration();
 	else node = parseInitialization();
-	addVariable(var);
 	rootNodes_.top()->children_.emplace_back(
 		new AstNode(std::move(node))
 	);
@@ -368,6 +415,14 @@ void Parser::While() {
 		new AstNode(std::move(whileNode))
 	);
 }
+
+void Parser::For() {
+	auto ForNode = parseFor();
+	rootNodes_.top()->children_.emplace_back(
+		new AstNode(std::move(ForNode))
+	);
+}
+
 void Parser::isVariableDeclared(std::string_view name) const {
 	auto it = std::ranges::find(variables_, name);
 	if (it != variables_.end()) {

@@ -4,5 +4,4 @@ class IfNode final: public ControlFlow {
 public:
     IfNode(std::unique_ptr<ConditionNode> condition, std::unique_ptr<AstNode> body, std::size_t line);
     std::string toString() override;
-private:
 };

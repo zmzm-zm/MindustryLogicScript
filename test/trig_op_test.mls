@@ -7,6 +7,11 @@ while (a < 10) {
     }
     a = a + 1;
 }
+var i = 0;
+while (i < 10) {
+    : print "TEST";
+    i = i + 1;
+}
 while (c < 20) {
     c = c + 1;
 }
