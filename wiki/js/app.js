@@ -406,6 +406,17 @@
         const { html, toc } = Markdown.parse(md);
   
         document.getElementById("md-content").innerHTML = html;
+        if (typeof renderMathInElement === 'function') {
+          renderMathInElement(document.getElementById("md-content"), {
+            delimiters: [
+              { left: '$$', right: '$$', display: true },
+              { left: '$', right: '$', display: false },
+              { left: '\\[', right: '\\]', display: true },
+              { left: '\\(', right: '\\)', display: false }
+            ],
+            throwOnError: false
+          });
+        }
         Toc.render(toc);
   
         if (slug) {

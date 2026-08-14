@@ -59,3 +59,19 @@ while (a < 10) {
   a = a + 1;
 } ~ 这个循环会在a等于10时退出
 ~~~
+### for
+for是**次数循环**  
+条件为**真-true**则执行当前for的代码块  
+条件为**假-false**则不执行  
+- `for ($EXPRESSION;$CONDITION;$EXPRESSION) { $CODEBLOCK }`
+~~~mls
+var sum = 0;
+for (var i = 0; i < 5; i = i + 1) {
+    sum = sum + i;
+    ~ var a = a + 1;
+    ~~
+    这个写法是错误的，会导致a被重复初始化，最后等于0 + 4 = 4
+    而不是正确的0 + Σᵢ₌₀⁴ i = 10
+    ~~
+}
+~~~
