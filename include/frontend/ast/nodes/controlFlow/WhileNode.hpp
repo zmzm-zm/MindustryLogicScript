@@ -1,6 +1,8 @@
 #pragma once
 #include <frontend/ast/nodes/controlFlow/ControlFlow.hpp>
 /*
+ * A while loop guards a body with a condition and repeats until the condition fails.
+ * Example input for:
  * var a = 0;
  * while (a < 10) {
  *      a = a + 1;
@@ -21,8 +23,20 @@
  * print "END" :$ENDLINE = $WHILELINE + line($BODY) + 1
  *
  */
+
+/** @ingroup ControlFlow
+ *  @brief A while loop construct.
+ */
 class WhileNode final: public ControlFlow {
 public:
+    /**
+     * @brief Constructs a while node.
+     * @param condition The loop condition.
+     * @param body      The loop body.
+     * @param line      The source line where the while appears.
+     */
     WhileNode(std::unique_ptr<ConditionNode> condition, std::unique_ptr<AstNode> body, std::size_t line);
+
+    /** @brief Serializes the while loop to logic code. */
     std::string toString() override;
 };

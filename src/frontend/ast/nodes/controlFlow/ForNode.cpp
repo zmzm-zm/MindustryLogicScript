@@ -11,17 +11,16 @@ initialization_(std::move(initialization)),
 expression_(std::move(expression)) {}
 
 std::string ForNode::toString() {
-    // for(init; cond; incr) body 展开为逻辑码
-    // 结构:
-    //   (init 语句)
-    //   (cond 计算)                         -> BOOLEAN0_
+    // Expand for(init; cond; incr) body into logic code.
+    // Layout:
+    //   (init statement)
+    //   (cond evaluation)                        -> BOOLEAN0_
     //   jump $ENDLINE equal BOOLEAN0_ true  : $SELFLINE
     //   (body)
-    //   (incr 语句)
+    //   (incr statement)
     //   jump $HEADLINE always
-    //   print "END"                         : $ENDLINE
+    //   print "END"                             : $ENDLINE
     std::string initStr = initialization_->toString();
-    int initLine = std::ranges::count(initStr, '\n');
 
     std::string incrStr = expression_->toString();
     int incrLine = std::ranges::count(incrStr, '\n');
@@ -34,11 +33,10 @@ std::string ForNode::toString() {
 
     int conditionLine = std::ranges::count(conditionStr_, '\n');
 
-    // selfLine_ 指向 jump 指令所在行。
-    // init 紧挨在 cond 之前; 循环体结束后需要跳回 init 第一行(重跑 init+cond)。
+    // selfLine_ points at the line of the jump instruction.
+    // init sits right before cond; after the body we jump back to cond's first line (to re-run cond).
     int headLine = selfLine_ - conditionLine - 1;
-    // 循环体 + incr 之后是 jump HEADLINE, 再之后是 print "END"。
-    // ENDLINE = selfLine_ + bodyLine + incrLine + 2
+    // After the body + incr we emit jump HEADLINE, then print "END".
     int endLine  = selfLine_ + bodyLine + incrLine + 1;
 
     return initStr

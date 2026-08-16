@@ -79,7 +79,7 @@ Token Tokenizer::readToken(const Strategy strategy, const uint8_t offset) {
 					(*pos)++;
 				}
 				if (*pos + 1 < contents_.size()) {
-					(*pos) += 2; // 跳过结束 ~~
+					(*pos) += 2; // skip the closing ~~
 				}
 			} else if (contents_[*pos] == '~') {
 				(*pos)++;

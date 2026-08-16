@@ -32,7 +32,7 @@ ConditionNode::LogicOperator ConditionNode::getLogicOp(std::string_view str) {
 std::vector<ConditionNode::Unit> ConditionNode::flatten(ExpressionNode* node) {
     if (!node) return {};
     const auto& val = node->getValue();
-    // 比较运算节点
+    // Comparison operation node.
     if (val != "&&" && val != "||") {
         std::string content = "op " + getOpStr(val)
                             + " {} "
@@ -41,10 +41,10 @@ std::vector<ConditionNode::Unit> ConditionNode::flatten(ExpressionNode* node) {
         return { Unit(std::move(content), LogicOperator::AND) };
     }
 
-    // 逻辑运算节点
+    // Logic operation node.
     LogicOperator curOp = getLogicOp(val);
 
-    // 翻转逻辑连接词
+    // Flip the logical connector (AND <-> OR) for the flattened sequence.
     if (curOp == LogicOperator::AND)
         curOp = LogicOperator::OR;
     else if (curOp == LogicOperator::OR)
@@ -56,10 +56,10 @@ std::vector<ConditionNode::Unit> ConditionNode::flatten(ExpressionNode* node) {
     if (leftUnits.empty()) return rightUnits;
     if (rightUnits.empty()) return leftUnits;
 
-    // 连接左右序列：左侧最后一个单元的 operator_ 设为当前逻辑运算符
+    // Join the left and right sequences: set the last unit's operator of the left sequence.
     leftUnits.back().operator_ = curOp;
 
-    // 合并右侧序列
+    // Merge the right sequence into the left one.
     leftUnits.insert(leftUnits.end(),
                      std::make_move_iterator(rightUnits.begin()),
                      std::make_move_iterator(rightUnits.end()));
@@ -78,7 +78,7 @@ std::string ConditionNode::toString() {
     std::vector<std::string> boolNames;
     int counter = 1;
 
-    // 1. 生成所有比较指令
+    // Emit all comparison instructions.
     for (auto& unit : units_) {
         std::string bName = "BOOLEAN" + std::to_string(counter) + "_";
         boolNames.push_back(bName);
@@ -90,7 +90,7 @@ std::string ConditionNode::toString() {
         ++counter;
     }
 
-    // 2. 按 OR 分组，段内 AND 归并
+    // Group by OR; merge AND segments within each group.
     std::vector<std::string> orSegments;
     std::vector<std::string> andStack;
 
@@ -116,9 +116,9 @@ std::string ConditionNode::toString() {
         }
     }
 
-    // 3. OR 归并
+    //  Merge the OR segments.
     if (orSegments.size() == 1) {
-        // 单个条件/单个AND段：直接赋给 BOOLEAN0_
+        // Single condition / single AND segment: assign directly to BOOLEAN0_.
         out << "op or BOOLEAN0_ " << orSegments[0] << " " << orSegments[0] << "\n";
     } else {
         std::string left = orSegments[0];

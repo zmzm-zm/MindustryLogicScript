@@ -27,7 +27,7 @@ void Parser::setRoot(std::unique_ptr<AstNode> root) {
 	rootNodes_.push(std::move(root));
 }
 std::unique_ptr<AstNode> Parser::getRoot() {
-	return std::move(rootNodes_.top()); // 返回最终结果时，栈内只剩一个根节点
+	return std::move(rootNodes_.top()); // The stack holds only one root node when finalizing.
 }
 void Parser::process() {
 	auto currentToken = tokenizer_->peek();
@@ -99,7 +99,6 @@ std::unique_ptr<OperationNode> Parser::parseOperation(
     std::size_t currentIndex = index;
 	int funcCallingNum = 0;
     auto makeNodeName = [&]() -> std::string {
-    	// LineCounter::increment();
         return currentName + std::to_string(currentIndex++) + "_";
     };
     while (true) {
@@ -186,7 +185,7 @@ std::unique_ptr<OperationNode> Parser::parseOperation(
     return std::move(output[0]);
 }
 std::unique_ptr<ConditionNode> Parser::parseCondition(std::string ending) const {
-    // 收集 tokens
+    // Collect token groups.
     std::vector<std::string> operators;
     std::vector<std::string> logics;
     std::vector<std::string> idents;
@@ -206,13 +205,13 @@ std::unique_ptr<ConditionNode> Parser::parseCondition(std::string ending) const 
         nextToken = tokenizer_->nextToken();
     }
 
-    // 验证输入合法性
+    // Validate the input.
     if (idents.empty()) {
         Logger::error("Condition has no operands");
         return std::make_unique<ConditionNode>("NA", nullptr, "false", nullptr);
     }
     uint8_t unitNum = operators.size();
-    // 简单情况：没有运算符，直接返回布尔变量
+    // Simple case: no operator, return the boolean variable directly.
     if (unitNum == 0) {
         return std::make_unique<ConditionNode>(
             "NA",
@@ -221,7 +220,7 @@ std::unique_ptr<ConditionNode> Parser::parseCondition(std::string ending) const 
             nullptr
         );
     }
-    // 构建操作数节点（叶子节点）
+    // Build the operand nodes (leaf nodes).
     std::vector<std::unique_ptr<ConditionNode>> operands;
     for (const auto& ident : idents) {
         operands.emplace_back(
@@ -233,18 +232,18 @@ std::unique_ptr<ConditionNode> Parser::parseCondition(std::string ending) const 
             )
         );
     }
-    // 构建比较单元 (comparison units)
-    // 例如: a < b, c == d, e > f
+    // Build the comparison units.
+    // e.g. a < b, c == d, e > f
     std::vector<std::unique_ptr<ConditionNode>> comparisons;
     for (int i = 0; i < unitNum; ++i) {
-        // 注意：每个比较单元需要2个操作数
+        // Note: each comparison unit requires 2 operands.
         size_t leftIdx = i * 2;
         size_t rightIdx = i * 2 + 1;
         if (rightIdx >= operands.size()) {
             Logger::error("Not enough operands for comparison");
             break;
         }
-        // 从 operands 中取出并转移所有权
+        // Move ownership of the operands out of the pool.
         auto left = std::move(operands[leftIdx]);
         auto right = std::move(operands[rightIdx]);
         comparisons.emplace_back(
@@ -256,20 +255,20 @@ std::unique_ptr<ConditionNode> Parser::parseCondition(std::string ending) const 
             )
         );
     }
-    // 清空 operands 所有元素已被 move，变为 nullptr
+    // All elements have been moved out; clear the pool.
     operands.clear();
-    // 如果只有一个比较单元，直接返回
+    // If there is only one comparison unit, return it directly.
     if (comparisons.size() == 1) {
         return std::move(comparisons[0]);
     }
-    // 如果有多个比较单元，用逻辑运算符连接
-    // 例如: (a < b) && (c == d) || (e > f)
+    // If there are multiple comparison units, join them with logical operators.
+    // e.g. (a < b) && (c == d) || (e > f)
     if (logics.empty()) {
         Logger::error("Multiple comparisons but no logical operators");
-        // 使用 && 作为默认
+        // Default to &&.
         logics.push_back("&&");
     }
-    // 构建组合树：从左到右关联
+    // Build the combined tree, associating from left to right.
     std::unique_ptr<ConditionNode> result = std::move(comparisons[0]);
     for (size_t i = 1; i < comparisons.size(); ++i) {
         size_t logicIdx = i - 1;

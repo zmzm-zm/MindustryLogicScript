@@ -4,8 +4,20 @@ OUTPUT_DIRECTORY       = ./doxygen_doc
 INPUT                  = ./include ./src
 RECURSIVE              = YES
 FILE_PATTERNS          = *.cpp *.hpp
+
 EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+EXTRACT_LOCAL_METHODS  = YES
+EXTRACT_ANON_NSPACES   = YES
+
+HIDE_UNDOC_MEMBERS     = NO
+HIDE_UNDOC_CLASSES     = NO
+
 SOURCE_BROWSER         = YES
 HAVE_DOT               = FALSE
 CALL_GRAPH             = YES
-GENERATE_LATEX		   = NO
+GENERATE_LATEX         = NO
+
+INTERNAL_DOCS          = YES
