@@ -26,11 +26,6 @@
       "title": "Language",
       "children": [
         {
-          "id": "language/built-in_function",
-          "title": "内置函数",
-          "file": "docs/language/built-in_function.md"
-        },
-        {
           "id": "language/grammar",
           "title": "语法",
           "file": "docs/language/grammar.md"
