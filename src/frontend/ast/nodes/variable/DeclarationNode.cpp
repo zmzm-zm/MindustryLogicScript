@@ -1,6 +1,6 @@
 #include <frontend/ast/nodes/variable/VariableNode.hpp>
 #include <frontend/ast/nodes/variable/DeclarationNode.hpp>
-#include <frontend/ast/nodes/ExpressionNode.hpp>
+#include <frontend/ast/nodes/expression/ExpressionNode.hpp>
 #include <memory>
 #include <string>
 DeclarationNode::DeclarationNode(std::string variable)

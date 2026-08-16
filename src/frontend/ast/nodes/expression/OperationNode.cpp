@@ -1,7 +1,7 @@
 #include <functional>
 #include <vector>
-#include <frontend/ast/nodes/OperationNode.hpp>
-#include <frontend/ast/nodes/ExpressionNode.hpp>
+#include <frontend/ast/nodes/expression/OperationNode.hpp>
+#include <frontend/ast/nodes/expression/ExpressionNode.hpp>
 OperationNode::OperationNode(
     const std::string& name,
     std::unique_ptr<ExpressionNode> left,

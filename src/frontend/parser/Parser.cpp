@@ -2,13 +2,13 @@
 #include <vector>
 #include <stdexcept>
 #include <iostream>
-#include <frontend/ast/nodes/ConditionNode.hpp>
+#include <frontend/ast/nodes/expression/ConditionNode.hpp>
 #include <frontend/lexer/Token.hpp>
 #include <frontend/lexer/Tokenizer.hpp>
 #include <frontend/parser/Parser.hpp>
 #include <frontend/ast/nodes/StatementNode.hpp>
 #include <frontend/ast/nodes/variable/InitializationNode.hpp>
-#include <frontend/ast/nodes/OperationNode.hpp>
+#include <frontend/ast/nodes/expression/OperationNode.hpp>
 #include <frontend/ast/nodes/variable/AssignmentNode.hpp>
 #include <frontend/ast/nodes/variable/DeclarationNode.hpp>
 #include <backend/logger/Logger.hpp>
@@ -19,9 +19,10 @@
 #include <frontend/ast/nodes/controlFlow/WhileNode.hpp>
 #include <frontend/ast/nodes/controlFlow/ForNode.hpp>
 #include <frontend/ast/nodes/mindustry/TrigOpNode.hpp>
+#include <frontend/ast/nodes/variable/UpdateNode.hpp>
 
-Parser::Parser() {}
-Parser::~Parser() {}
+Parser::Parser()  = default;
+Parser::~Parser() = default;
 void Parser::setRoot(std::unique_ptr<AstNode> root) {
 	rootNodes_.push(std::move(root));
 }
@@ -41,7 +42,8 @@ void Parser::process() {
 			if (currentToken.value_ == ":") mindustryLogic();
 			break;
 		case Token::Type::IDENT:
-			if (currentToken.value_.find("(") == std::string::npos) variableAssignment();
+			if (tokenizer_->peek(2).value_.size() == 2) IncrementDecrement();
+			else if (currentToken.value_.find('(') == std::string::npos) variableAssignment();
 			break;
 		case Token::Type::COMMENT:
 			break;
@@ -53,6 +55,15 @@ void Parser::process() {
 }
 void Parser::setTokenizer(Tokenizer& tokenizer) {
     tokenizer_ = &tokenizer;
+}
+std::unique_ptr<VariableNode> Parser::parseDeclaration() {
+	tokenizer_->pass();
+	auto var = tokenizer_->nextToken().value_;
+	isVariableDeclared(var);
+	addVariable(var);
+	tokenizer_->pass();
+	LineCounter::increment();
+	return std::make_unique<DeclarationNode>(var);
 }
 std::unique_ptr<VariableNode> Parser::parseInitialization() {
     tokenizer_->pass();
@@ -73,8 +84,8 @@ std::unique_ptr<VariableNode> Parser::parseAssignment() const {
 	tokenizer_->pass();
 	auto exprNode = parseOperation(variable);
 	auto exprNodeStr = exprNode->toString();
-	int operationLine = std::ranges::count(exprNodeStr, '\n');
-	for (uint8_t i = 0; i < operationLine; ++i) LineCounter::increment();
+	uint8_t operationLine = std::ranges::count(exprNodeStr, '\n');
+	for (int i = 0; i < operationLine; ++i) LineCounter::increment();
 	LineCounter::increment();
 	return std::make_unique<AssignmentNode>(variable, std::move(exprNode));
 }
@@ -97,8 +108,8 @@ std::unique_ptr<OperationNode> Parser::parseOperation(
         	std::string nodeName = makeNodeName();
         	auto value = tok.value_;
         	if (tok.type_ == Token::Type::IDENT) {
-        		if (value.substr(0,3) == "_m_") {
-        			value = trig(makeNodeName(), value);
+        		if (value.substr(0,1) == "_") {
+        			value = parseTrig(makeNodeName(), value);
         			nodeName = value;
         			++funcCallingNum;
         		}
@@ -225,7 +236,7 @@ std::unique_ptr<ConditionNode> Parser::parseCondition(std::string ending) const 
     // 构建比较单元 (comparison units)
     // 例如: a < b, c == d, e > f
     std::vector<std::unique_ptr<ConditionNode>> comparisons;
-    for (uint8_t i = 0; i < unitNum; ++i) {
+    for (int i = 0; i < unitNum; ++i) {
         // 注意：每个比较单元需要2个操作数
         size_t leftIdx = i * 2;
         size_t rightIdx = i * 2 + 1;
@@ -276,15 +287,6 @@ std::unique_ptr<ConditionNode> Parser::parseCondition(std::string ending) const 
     comparisons.clear();
     return result;
 }
-std::unique_ptr<VariableNode> Parser::parseDeclaration() {
-	tokenizer_->pass();
-	auto var = tokenizer_->nextToken().value_;
-	isVariableDeclared(var);
-	addVariable(var);
-	tokenizer_->pass();
-	LineCounter::increment();
-	return std::make_unique<DeclarationNode>(var);
-}
 std::unique_ptr<StatementNode> Parser::parseMindustryLogic() const {
 	tokenizer_->pass(); // :
 	std::string result;
@@ -305,15 +307,15 @@ std::unique_ptr<ControlFlow> Parser::parseIf() {
 	auto condition = parseCondition();
 	std::string conditionStr = condition->toString();
 	int conditionLine = std::ranges::count(conditionStr, '\n');
-	for (uint8_t i = 0; i < conditionLine; ++i) LineCounter::increment();
+	for (int i = 0; i < conditionLine; ++i) LineCounter::increment();
 	tokenizer_->pass(); // {
 	rootNodes_.push(std::make_unique<AstNode>());
 	LineCounter::increment();
-	auto cureentLine = LineCounter::getLineCount();
+	auto currentLine = LineCounter::getLineCount();
 	process();
 	LineCounter::increment();
 	tokenizer_->pass(); // }
-	auto node = std::make_unique<IfNode>(std::move(condition), std::move(rootNodes_.top()), cureentLine);
+	auto node = std::make_unique<IfNode>(std::move(condition), std::move(rootNodes_.top()), currentLine);
 	rootNodes_.pop();
 	return std::move(node);
 }
@@ -323,16 +325,16 @@ std::unique_ptr<ControlFlow> Parser::parseWhile() {
 	auto condition = parseCondition();
 	std::string conditionStr = condition->toString();
 	int conditionLine = std::ranges::count(conditionStr, '\n');
-	for (uint8_t i = 0; i < conditionLine; ++i) LineCounter::increment();
+	for (int i = 0; i < conditionLine; ++i) LineCounter::increment();
 	tokenizer_->pass(); // {
 	rootNodes_.push(std::make_unique<AstNode>());
 	LineCounter::increment();
-	auto cureentLine = LineCounter::getLineCount();
+	auto currentLine = LineCounter::getLineCount();
 	process();
 	LineCounter::increment();
 	LineCounter::increment();
 	tokenizer_->pass(); // }
-	auto node = std::make_unique<WhileNode>(std::move(condition), std::move(rootNodes_.top()), cureentLine);
+	auto node = std::make_unique<WhileNode>(std::move(condition), std::move(rootNodes_.top()), currentLine);
 	rootNodes_.pop();
 	return std::move(node);
 }
@@ -353,14 +355,22 @@ std::unique_ptr<ControlFlow> Parser::parseFor() {
 	auto condition = parseCondition(";");
 	std::string conditionStr = condition->toString();
 	int conditionLine = std::ranges::count(conditionStr, '\n');
+	for (int i = 0; i < conditionLine; ++i) LineCounter::increment();
 
 	std::unique_ptr<VariableNode> incr;
 	tok = tokenizer_->peek();
+	auto nextTokenValue = tokenizer_->peek(2).value_;
 	if (tok.value_ == "var") {
 		Logger::error("Do not expect \"var\" at increment");
-	} else incr = std::move(parseAssignment());
-	tokenizer_->pass(); // )
-
+	} else if (nextTokenValue == "++"
+				|| nextTokenValue == "--") {
+		incr = std::move(parseIncrementDecrement());
+		LineCounter::decrement();
+	}
+	else {
+		incr = std::move(parseAssignment());
+		tokenizer_->pass(); // )
+	}
 	tokenizer_->pass(); // {
 	rootNodes_.push(std::make_unique<AstNode>());
 	LineCounter::increment();
@@ -368,7 +378,7 @@ std::unique_ptr<ControlFlow> Parser::parseFor() {
 	process();
 	LineCounter::increment();
 	LineCounter::increment();
-	for (uint8_t i = 0; i < conditionLine; ++i) LineCounter::increment();
+	if (nextTokenValue == "++" || nextTokenValue == "--")LineCounter::increment();
 	tokenizer_->pass(); // }
 
 	auto node = std::make_unique<ForNode>(std::move(initialization),
@@ -377,10 +387,60 @@ std::unique_ptr<ControlFlow> Parser::parseFor() {
 	rootNodes_.pop();
 	return std::move(node);
 }
+std::string Parser::parseTrig(std::string resultName, std::string value) const {
+	tokenizer_->pass();
+	tokenizer_->pass();
+	std::string param = tokenizer_->nextToken().value_;
+	tokenizer_->pass();
+	auto funcName = value.substr(1,4);
+	TrigOpNode::Type type = TrigOpNode::Type::UNDEFINED;
+	if (funcName == "tan") type = TrigOpNode::Type::TAN;
+	else if (funcName == "sin") type = TrigOpNode::Type::SIN;
+	else if (funcName == "cos") type = TrigOpNode::Type::COS;
+	else if (funcName == "atan") type = TrigOpNode::Type::ATAN;
+	else if (funcName == "asin") type = TrigOpNode::Type::ASIN;
+	else if (funcName == "acos") type = TrigOpNode::Type::ACOS;
+	else throw std::runtime_error("Unknown Function: " + funcName);
+	LineCounter::increment();
+	rootNodes_.top()->children_.emplace_back(
+		new AstNode(std::make_unique<TrigOpNode>(resultName, type, param))
+	);
+	return resultName;
+}
+std::unique_ptr<VariableNode> Parser::parseIncrementDecrement() {
+	auto var = tokenizer_->nextToken().value_;
+	auto op = tokenizer_->nextToken().value_;
+	if (op == "++" || op == "--") {
+		LineCounter::increment();
+		tokenizer_->pass();// ;
+		return std::make_unique<UpdateNode>(var, op);
+	}
+	if (op == "+="
+			|| op == "-="
+			|| op == "*="
+			|| op == "/=") {
+		if (tokenizer_->peek(2).value_ != ";") {
+			auto operation = parseOperation(var);
+			std::string opStr = operation->toString();
+			for(int i = 0; i < std::ranges::count(opStr, '\n'); ++i) LineCounter::increment();
+			LineCounter::increment();
+			return std::make_unique<UpdateNode>(var, op, std::move(operation));
+		}
+		auto ident = tokenizer_->nextToken().value_;
+		LineCounter::increment();
+		tokenizer_->pass();// ;
+		return std::make_unique<UpdateNode>(var, op, ident);
+	}
+	Logger::error("Unknow or unsupported operator:", op);
+	throw std::runtime_error("Unknow or unsupported operator:");
+}
 void Parser::variableDeclaration() {
 	auto var = tokenizer_->peek(2).value_;
 	auto c = tokenizer_->peek(3).value_;
-	if (c != "=" && c != ";") Logger::error("expect \"=\" or \";\"");
+	if (c != "=" && c != ";") {
+		Logger::error("expect \"=\" or \";\"");
+		throw std::runtime_error("Expected \"=\" or \";\"");
+	}
 	std::unique_ptr<StatementNode> node;
 	if(c == ";") node = parseDeclaration();
 	else node = parseInitialization();
@@ -415,14 +475,18 @@ void Parser::While() {
 		new AstNode(std::move(whileNode))
 	);
 }
-
 void Parser::For() {
 	auto ForNode = parseFor();
 	rootNodes_.top()->children_.emplace_back(
 		new AstNode(std::move(ForNode))
 	);
 }
-
+void Parser::IncrementDecrement() {
+	auto node = parseIncrementDecrement();
+	rootNodes_.top()->children_.emplace_back(
+		new AstNode(std::move(node))
+	);
+}
 void Parser::isVariableDeclared(std::string_view name) const {
 	auto it = std::ranges::find(variables_, name);
 	if (it != variables_.end()) {
@@ -437,24 +501,4 @@ void Parser::isVariableUndeclared(std::string_view name) const {
 }
 void Parser::addVariable(std::string_view name) {
 	variables_.emplace_back(name);
-}
-std::string Parser::trig(std::string resultName, std::string value) const {
-	tokenizer_->pass();
-	tokenizer_->pass();
-	std::string param = tokenizer_->nextToken().value_;
-	tokenizer_->pass();
-	auto funcName = value.substr(3,6);
-	TrigOpNode::Type type = TrigOpNode::Type::UNDEFINED;
-	if (funcName == "tan") type = TrigOpNode::Type::TAN;
-	else if (funcName == "sin") type = TrigOpNode::Type::SIN;
-	else if (funcName == "cos") type = TrigOpNode::Type::COS;
-	else if (funcName == "atan") type = TrigOpNode::Type::ATAN;
-	else if (funcName == "asin") type = TrigOpNode::Type::ASIN;
-	else if (funcName == "acos") type = TrigOpNode::Type::ACOS;
-	else throw std::runtime_error("Unknown Function: " + funcName);
-	LineCounter::increment();
-	rootNodes_.top()->children_.emplace_back(
-		new AstNode(std::make_unique<TrigOpNode>(resultName, type, param))
-	);
-	return resultName;
 }

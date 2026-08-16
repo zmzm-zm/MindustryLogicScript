@@ -2,7 +2,7 @@
 #include <string>
 #include <memory>
 #include <frontend/ast/nodes/StatementNode.hpp>
-#include <frontend/ast/nodes/ExpressionNode.hpp>
+#include <frontend/ast/nodes/expression/ExpressionNode.hpp>
 class VariableNode : public StatementNode {
 public:
 	VariableNode(std::string variable, std::unique_ptr<ExpressionNode> value);

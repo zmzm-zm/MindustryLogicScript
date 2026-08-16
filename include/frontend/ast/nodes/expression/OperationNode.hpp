@@ -1,5 +1,5 @@
 #pragma once
-#include <frontend/ast/nodes/ExpressionNode.hpp>
+#include <frontend/ast/nodes/expression/ExpressionNode.hpp>
 
 class OperationNode final: public ExpressionNode {
 public:

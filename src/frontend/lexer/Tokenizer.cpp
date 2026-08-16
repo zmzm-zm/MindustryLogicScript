@@ -36,7 +36,8 @@ bool Tokenizer::isOperator(std::string_view c) noexcept {
 	return c == "+" || c == "-" || c == "*" || c == "/" || c == "//" || c == "="
 		|| c == "%" || c == "<" || c == ">" || c == "==" || c == "!=" || c == ";"
 		|| c == "&&" || c == "||" || c == "(" || c == ")" || c == "{" || c == "}"
-		|| c == "!=" || c == "<=" || c == ">=";
+		|| c == "!=" || c == "<=" || c == ">=" || c == "++" || c == "--" || c == "+="
+		|| c == "-=" || c == "*=" || c == "/=";
 }
 Token::Type Tokenizer::getToken(const std::string_view value) {
 	if (value == "var" ||
@@ -65,7 +66,7 @@ Token Tokenizer::readToken(const Strategy strategy, const uint8_t offset) {
 	}
 	std::string value;
 	Token::Type type = Token::Type::UNDEFINED;
-	for (uint8_t i = 0; i < offset; ++i) {
+	for (int i = 0; i < offset; ++i) {
 		while (*pos < contents_.size()) {
 			if (isspace(contents_[*pos])) {
 				(*pos)++;
@@ -100,7 +101,13 @@ Token Tokenizer::readToken(const Strategy strategy, const uint8_t offset) {
 			|| c == "|" && contents_[*pos] == '|'
 			|| c == "!" && contents_[*pos] == '='
 			|| c == "<" && contents_[*pos] == '='
-			|| c == ">" && contents_[*pos] == '=') {
+			|| c == ">" && contents_[*pos] == '='
+			|| c == "+" && contents_[*pos] == '+'
+			|| c == "-" && contents_[*pos] == '-'
+			|| c == "+" && contents_[*pos] == '='
+			|| c == "-" && contents_[*pos] == '='
+			|| c == "*" && contents_[*pos] == '='
+			|| c == "/" && contents_[*pos] == '=') {
 			c += contents_[(*pos)++];
 		}
 		value = "";

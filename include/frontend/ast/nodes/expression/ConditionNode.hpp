@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include <frontend/ast/nodes/ExpressionNode.hpp>
+#include <frontend/ast/nodes/expression/ExpressionNode.hpp>
 
 class ConditionNode final : public ExpressionNode {
 public:
